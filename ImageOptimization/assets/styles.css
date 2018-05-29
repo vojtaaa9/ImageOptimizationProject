@@ -1,0 +1,14 @@
+﻿html {
+  background: #fff;
+}
+
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: inherit;
+  padding: 0;
+}
+
+.well {
+  margin: 0 auto;
+  max-width: 45em;
+}
