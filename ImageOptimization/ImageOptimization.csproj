@@ -650,7 +650,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="DataPersistenceLayer\ImageContext.cs" />
-    <Compile Include="Interfaces\IImageRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
