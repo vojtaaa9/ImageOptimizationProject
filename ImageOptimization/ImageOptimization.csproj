@@ -1,6 +1,6 @@
 ﻿<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -44,8 +44,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web.DynamicData" />
@@ -57,6 +63,24 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.6\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.6\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -66,46 +90,585 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Web.Razor">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Webpages">
-      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Webpages.Deployment">
-      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Webpages.Razor">
-      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Helpers">
-      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc">
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\styles.css" />
     <Content Include="Global.asax" />
+    <Content Include="images\001-manager.svg" />
+    <Content Include="images\001-pie-chart-13.svg" />
+    <Content Include="images\001-referee-1.svg" />
+    <Content Include="images\002-happy.svg" />
+    <Content Include="images\002-percentage-4.svg" />
+    <Content Include="images\002-winners.svg" />
+    <Content Include="images\003-analytics-7.svg" />
+    <Content Include="images\003-target.svg" />
+    <Content Include="images\003-vodka.svg" />
+    <Content Include="images\004-barrier.svg" />
+    <Content Include="images\004-key.svg" />
+    <Content Include="images\004-line-chart-1.svg" />
+    <Content Include="images\005-communication.svg" />
+    <Content Include="images\005-profits-2.svg" />
+    <Content Include="images\005-soccer-game-1.svg" />
+    <Content Include="images\006-mobile-app.svg" />
+    <Content Include="images\006-pyramid-chart-3.svg" />
+    <Content Include="images\006-search.svg" />
+    <Content Include="images\007-fan-2.svg" />
+    <Content Include="images\007-loss.svg" />
+    <Content Include="images\007-social-media.svg" />
+    <Content Include="images\008-matryoshka.svg" />
+    <Content Include="images\008-network-2.svg" />
+    <Content Include="images\008-pie-chart-12.svg" />
+    <Content Include="images\009-fan-1.svg" />
+    <Content Include="images\009-hierarchical-structure.svg" />
+    <Content Include="images\009-pie-chart-11.svg" />
+    <Content Include="images\010-kremlin.svg" />
+    <Content Include="images\010-pie-chart-10.svg" />
+    <Content Include="images\010-relations-1.svg" />
+    <Content Include="images\011-bar-chart-9.svg" />
+    <Content Include="images\011-interview.svg" />
+    <Content Include="images\011-soccer.svg" />
+    <Content Include="images\012-pie-chart-9.svg" />
+    <Content Include="images\012-podium.svg" />
+    <Content Include="images\012-team-bench.svg" />
+    <Content Include="images\013-bar-chart-8.svg" />
+    <Content Include="images\013-playoff.svg" />
+    <Content Include="images\013-teamwork-1.svg" />
+    <Content Include="images\014-analytics-6.svg" />
+    <Content Include="images\014-businessman-2.svg" />
+    <Content Include="images\014-match.svg" />
+    <Content Include="images\015-analytics-5.svg" />
+    <Content Include="images\015-settings-1.svg" />
+    <Content Include="images\015-training.svg" />
+    <Content Include="images\016-network-1.svg" />
+    <Content Include="images\016-pie-chart-8.svg" />
+    <Content Include="images\016-reporter.svg" />
+    <Content Include="images\017-bar-chart-7.svg" />
+    <Content Include="images\017-chat-1.svg" />
+    <Content Include="images\017-soccer-player-1.svg" />
+    <Content Include="images\018-balance.svg" />
+    <Content Include="images\018-goalkeeper-1.svg" />
+    <Content Include="images\018-percentage-3.svg" />
+    <Content Include="images\019-businessman-1.svg" />
+    <Content Include="images\019-schedule.svg" />
+    <Content Include="images\019-transfer-1.svg" />
+    <Content Include="images\020-bar-chart-6.svg" />
+    <Content Include="images\020-offside.svg" />
+    <Content Include="images\020-settings.svg" />
+    <Content Include="images\021-idea-1.svg" />
+    <Content Include="images\021-pie-chart-7.svg" />
+    <Content Include="images\021-soccer-jersey-1.svg" />
+    <Content Include="images\022-diagrams.svg" />
+    <Content Include="images\022-emotion.svg" />
+    <Content Include="images\022-football.svg" />
+    <Content Include="images\023-head-hitting.svg" />
+    <Content Include="images\023-pie-chart-6.svg" />
+    <Content Include="images\023-pin.svg" />
+    <Content Include="images\024-bar-chart-5.svg" />
+    <Content Include="images\024-share.svg" />
+    <Content Include="images\024-stadium.svg" />
+    <Content Include="images\025-analytics-4.svg" />
+    <Content Include="images\025-businessman.svg" />
+    <Content Include="images\025-coach.svg" />
+    <Content Include="images\026-analytics-3.svg" />
+    <Content Include="images\026-referee.svg" />
+    <Content Include="images\026-resume.svg" />
+    <Content Include="images\027-bar-chart-4.svg" />
+    <Content Include="images\027-community.svg" />
+    <Content Include="images\027-substitute-player.svg" />
+    <Content Include="images\028-champion.svg" />
+    <Content Include="images\028-friendship-2.svg" />
+    <Content Include="images\028-transfer.svg" />
+    <Content Include="images\029-percentage-2.svg" />
+    <Content Include="images\029-podium.svg" />
+    <Content Include="images\029-puzzle-1.svg" />
+    <Content Include="images\030-bar-chart-3.svg" />
+    <Content Include="images\030-family.svg" />
+    <Content Include="images\030-soccer-game.svg" />
+    <Content Include="images\031-fan.svg" />
+    <Content Include="images\031-line-chart.svg" />
+    <Content Include="images\031-think.svg" />
+    <Content Include="images\032-bar-chart-2.svg" />
+    <Content Include="images\032-doctor.svg" />
+    <Content Include="images\032-friendship-1.svg" />
+    <Content Include="images\033-profits-1.svg" />
+    <Content Include="images\033-solidarity.svg" />
+    <Content Include="images\033-trumpet.svg" />
+    <Content Include="images\034-analytics-2.svg" />
+    <Content Include="images\034-pennant.svg" />
+    <Content Include="images\034-relations.svg" />
+    <Content Include="images\035-analytics-1.svg" />
+    <Content Include="images\035-group-1.svg" />
+    <Content Include="images\035-strategy.svg" />
+    <Content Include="images\036-corner.svg" />
+    <Content Include="images\036-pyramid-chart-2.svg" />
+    <Content Include="images\036-teamwork.svg" />
+    <Content Include="images\037-add-user.svg" />
+    <Content Include="images\037-pie-chart-5.svg" />
+    <Content Include="images\037-soccer-ball.svg" />
+    <Content Include="images\038-bar-chart-1.svg" />
+    <Content Include="images\038-emotions.svg" />
+    <Content Include="images\038-goalkeeper.svg" />
+    <Content Include="images\039-goal.svg" />
+    <Content Include="images\039-pie-chart-4.svg" />
+    <Content Include="images\039-scoreboard.svg" />
+    <Content Include="images\040-goal.svg" />
+    <Content Include="images\040-pie-chart-3.svg" />
+    <Content Include="images\040-social-care.svg" />
+    <Content Include="images\041-percentage-1.svg" />
+    <Content Include="images\041-puzzle.svg" />
+    <Content Include="images\041-tickets.svg" />
+    <Content Include="images\042-medal.svg" />
+    <Content Include="images\042-percentage.svg" />
+    <Content Include="images\042-team.svg" />
+    <Content Include="images\043-network.svg" />
+    <Content Include="images\043-profits.svg" />
+    <Content Include="images\043-trophy.svg" />
+    <Content Include="images\044-pyramid-chart-1.svg" />
+    <Content Include="images\044-sadness.svg" />
+    <Content Include="images\044-soccer-shoe.svg" />
+    <Content Include="images\045-handshake.svg" />
+    <Content Include="images\045-pyramid-chart.svg" />
+    <Content Include="images\045-soccer-field.svg" />
+    <Content Include="images\046-chat.svg" />
+    <Content Include="images\046-pie-chart-2.svg" />
+    <Content Include="images\046-soccer-player.svg" />
+    <Content Include="images\047-analytics.svg" />
+    <Content Include="images\047-friendship.svg" />
+    <Content Include="images\047-soccer-jersey.svg" />
+    <Content Include="images\048-bar-chart.svg" />
+    <Content Include="images\048-idea.svg" />
+    <Content Include="images\048-red-card.svg" />
+    <Content Include="images\049-group.svg" />
+    <Content Include="images\049-pie-chart-1.svg" />
+    <Content Include="images\049-yellow-card.svg" />
+    <Content Include="images\050-pie-chart.svg" />
+    <Content Include="images\050-relationship.svg" />
+    <Content Include="images\050-stopwatch.svg" />
+    <Content Include="images\20161009-_MG_0681_final.png" />
+    <Content Include="images\add-a-document-interface-symbol.svg" />
+    <Content Include="images\analytics-chart-on-a-monitor-screen.svg" />
+    <Content Include="images\analytics-chart-on-a-monitor.svg" />
+    <Content Include="images\analytics-chart-symbol.svg" />
+    <Content Include="images\analytics-document-interface-symbol.svg" />
+    <Content Include="images\analytics-symbol-of-two-circles-of-different-sizes-with-two-arrows-between-them.svg" />
+    <Content Include="images\antenna.svg" />
+    <Content Include="images\argument-document-symbol-of-a-paper-sheet-with-an-exclamation-sign.svg" />
+    <Content Include="images\bars-graphic.svg" />
+    <Content Include="images\boxes-for-data.svg" />
+    <Content Include="images\buy-by-cloud-symbol.svg" />
+    <Content Include="images\calendar-page-on-day-16.svg" />
+    <Content Include="images\chart-document.svg" />
+    <Content Include="images\cloud-alert-interface-symbol.svg" />
+    <Content Include="images\cloud-analytics-interface-symbol.svg" />
+    <Content Include="images\cloud-analytics.svg" />
+    <Content Include="images\cloud-black-shape-internet-interface-symbol-variant.svg" />
+    <Content Include="images\cloud-calendar-tool-symbol.svg" />
+    <Content Include="images\cloud-camera-symbol.svg" />
+    <Content Include="images\cloud-chart-of-bars.svg" />
+    <Content Include="images\cloud-computer-symbol.svg" />
+    <Content Include="images\cloud-data-distribution-symbol.svg" />
+    <Content Include="images\cloud-data-interface-symbol-with-small-folder.svg" />
+    <Content Include="images\cloud-data-interface-symbol.svg" />
+    <Content Include="images\cloud-direction-out.svg" />
+    <Content Include="images\cloud-document-interface-symbol-1.svg" />
+    <Content Include="images\cloud-document-interface-symbol.svg" />
+    <Content Include="images\cloud-exchange-interface-symbol-1.svg" />
+    <Content Include="images\cloud-exchange-interface-symbol-2.svg" />
+    <Content Include="images\cloud-exchange-interface-symbol-with-up-and-down-arrows.svg" />
+    <Content Include="images\cloud-exchange-interface-symbol.svg" />
+    <Content Include="images\cloud-exchange-symbol-with-up-and-down-arrows-couple.svg" />
+    <Content Include="images\cloud-give-symbol-with-two-hands-receiving.svg" />
+    <Content Include="images\cloud-group-with-a-circular-arrow-around.svg" />
+    <Content Include="images\cloud-in.svg" />
+    <Content Include="images\cloud-input.svg" />
+    <Content Include="images\cloud-locked-symbol-1.svg" />
+    <Content Include="images\cloud-locked-symbol.svg" />
+    <Content Include="images\cloud-off-sign.svg" />
+    <Content Include="images\cloud-out.svg" />
+    <Content Include="images\cloud-phone-interface-symbol.svg" />
+    <Content Include="images\cloud-pic-symbol.svg" />
+    <Content Include="images\cloud-play-interface-symbol.svg" />
+    <Content Include="images\cloud-play.svg" />
+    <Content Include="images\cloud-search-interface-symbol-with-a-magnifier.svg" />
+    <Content Include="images\cloud-search-interface-symbol.svg" />
+    <Content Include="images\cloud-settings-interface-symbol.svg" />
+    <Content Include="images\cloud-settings-symbol-with-a-gear.svg" />
+    <Content Include="images\cloud-signal-interface-symbol.svg" />
+    <Content Include="images\cloud-staff-interface-symbol.svg" />
+    <Content Include="images\cloud-upload-symbol-for-interface.svg" />
+    <Content Include="images\cloud-with-an-arrow-pointing-in.svg" />
+    <Content Include="images\cloud-with-arrows-couple-entering-to-it.svg" />
+    <Content Include="images\cloud-with-data-on-server.svg" />
+    <Content Include="images\cloud-with-dollar-sign.svg" />
+    <Content Include="images\cloud-with-exclamation-sign.svg" />
+    <Content Include="images\cloud-with-left-arrow.svg" />
+    <Content Include="images\cloud-with-less-sign.svg" />
+    <Content Include="images\cloud-with-plus-sign.svg" />
+    <Content Include="images\cloud-with-question-mark.svg" />
+    <Content Include="images\cloud-with-right-arrow.svg" />
+    <Content Include="images\cloud-with-verification-sign.svg" />
+    <Content Include="images\cloud-world-symbol.svg" />
+    <Content Include="images\code-search-interface-symbol-of-a-magnifier-on-binary-code-numbers.svg" />
+    <Content Include="images\computer-analytics-graphic-on-screen.svg" />
+    <Content Include="images\computer-analytics.svg" />
+    <Content Include="images\computer-binary-code.svg" />
+    <Content Include="images\computer-cloud-connection-interface-symbol.svg" />
+    <Content Include="images\computer-code-interface-symbol-of-a-magnifier-on-binary-code-of-a-laptop.svg" />
+    <Content Include="images\computer-data-in-folders-symbols-on-the-screen-of-a-laptop.svg" />
+    <Content Include="images\computer-data-interface-symbol-of-a-monitor-surrounded-by-arrows-pointing-to-it.svg" />
+    <Content Include="images\computer-email-on-monitor-screen-interface-symbol.svg" />
+    <Content Include="images\computer-in-laptop-variant.svg" />
+    <Content Include="images\computer-internet-signal-symbol-on-a-monitor.svg" />
+    <Content Include="images\computer-play-interface-symbol-for-video-or-presentation.svg" />
+    <Content Include="images\computer-search-interface-symbol.svg" />
+    <Content Include="images\computer-settings-interface-symbol-of-a-monitor-screen-with-gears.svg" />
+    <Content Include="images\computer-signal-interface-symbol.svg" />
+    <Content Include="images\computer-with-cloud-symbol-on-monitor-screen.svg" />
+    <Content Include="images\computers-exchange-interface-symbol.svg" />
+    <Content Include="images\computers-network-interface-symbol.svg" />
+    <Content Include="images\computers-sharing-data.svg" />
+    <Content Include="images\computers.svg" />
+    <Content Include="images\connection-between-computer-and-cloud.svg" />
+    <Content Include="images\css-document-interface-symbol.svg" />
+    <Content Include="images\cv-file-interface-symbol.svg" />
+    <Content Include="images\data-exchange-between-folders.svg" />
+    <Content Include="images\data-exchange-interface-symbol-1.svg" />
+    <Content Include="images\data-exchange-interface-symbol.svg" />
+    <Content Include="images\data-folder-symbol-for-interface.svg" />
+    <Content Include="images\data-folders-symbol.svg" />
+    <Content Include="images\data-in-a-folder-interface-symbol.svg" />
+    <Content Include="images\data-in-folder.svg" />
+    <Content Include="images\data-interface-symbol-of-a-file-in-a-folder.svg" />
+    <Content Include="images\data-locked-interface-symbol-of-a-folder-with-a-closed-padlock.svg" />
+    <Content Include="images\data-management-1.svg" />
+    <Content Include="images\data-management-interface-symbol-with-gears-and-binary-code-numbers.svg" />
+    <Content Include="images\data-management-symbol.svg" />
+    <Content Include="images\data-management.svg" />
+    <Content Include="images\data-out-interface-symbol.svg" />
+    <Content Include="images\data-search-interface-symbol.svg" />
+    <Content Include="images\data-settings-interface-symbol.svg" />
+    <Content Include="images\data-symbols-into-a-funnel.svg" />
+    <Content Include="images\data-to-the-cloud.svg" />
+    <Content Include="images\delete-file-interface-symbol.svg" />
+    <Content Include="images\delete-from-the-cloud-interface-symbol-with-a-cross.svg" />
+    <Content Include="images\doc-document-interface-symbol.svg" />
+    <Content Include="images\document-analytics-interface-symbol.svg" />
+    <Content Include="images\document-exchange-interface-symbol.svg" />
+    <Content Include="images\document-interface-symbol-of-a-paper-sheet-with-three-arrows-on-it-pointing-to-right.svg" />
+    <Content Include="images\document-interface-symbol-with-an-image-and-text-lines.svg" />
+    <Content Include="images\document-interface-symbol-with-images-and-text.svg" />
+    <Content Include="images\document-locked-interface-symbol.svg" />
+    <Content Include="images\document-of-bars-chart.svg" />
+    <Content Include="images\document-of-business-chart.svg" />
+    <Content Include="images\document-of-news.svg" />
+    <Content Include="images\document-of-shopping.svg" />
+    <Content Include="images\document-of-staff.svg" />
+    <Content Include="images\document-of-text-or-font.svg" />
+    <Content Include="images\document-question.svg" />
+    <Content Include="images\document-search-interface-symbol.svg" />
+    <Content Include="images\document-search-symbol.svg" />
+    <Content Include="images\document-settings-interface-symbol-of-a-papers-sheet-with-two-gears.svg" />
+    <Content Include="images\document-settings-interface-symbol.svg" />
+    <Content Include="images\document-symbol-1.svg" />
+    <Content Include="images\document-symbol-with-text-lines.svg" />
+    <Content Include="images\document-symbol.svg" />
+    <Content Include="images\document-with-a-list-with-verification-marks.svg" />
+    <Content Include="images\document-with-code-interface-symbol.svg" />
+    <Content Include="images\document-with-frame.svg" />
+    <Content Include="images\document-with-minus-sign.svg" />
+    <Content Include="images\document-with-nine-tiles-outlines.svg" />
+    <Content Include="images\document-with-table.svg" />
+    <Content Include="images\document-with-text-and-images.svg" />
+    <Content Include="images\document-with-two-columns-of-text-lines-and-images.svg" />
+    <Content Include="images\document-with-two-columns-of-text-lines.svg" />
+    <Content Include="images\documents-symbol.svg" />
+    <Content Include="images\dresden_fireworks.png" />
+    <Content Include="images\dresden_sphere_final.png" />
+    <Content Include="images\email-black-envelope-shape.svg" />
+    <Content Include="images\email-document-interface-symbol-of-a-paper-sheet-with-an-arroba-sign.svg" />
+    <Content Include="images\email-on-cloud-interface-symbol.svg" />
+    <Content Include="images\email-open-interface-symbol-of-an-opened-envelope-back-with-a-letter-inside.svg" />
+    <Content Include="images\facebook_title.png" />
+    <Content Include="images\favorite-data-folder.svg" />
+    <Content Include="images\file-symbol-with-arrows-couple-in-circle.svg" />
+    <Content Include="images\files-folders-of-office-papers.svg" />
+    <Content Include="images\floating_final.png" />
+    <Content Include="images\folder-with-data-interface-symbol.svg" />
+    <Content Include="images\gif-document-interface-symbol.svg" />
+    <Content Include="images\GOPR3092-5_final.png" />
+    <Content Include="images\IMG_0021_final.png" />
+    <Content Include="images\IMG_1625-2_final.png" />
+    <Content Include="images\IMG_1660.png" />
+    <Content Include="images\IMG_1754_final.png" />
+    <Content Include="images\IMG_1755.png" />
+    <Content Include="images\IMG_3547.png" />
+    <Content Include="images\IMG_4042_final.png" />
+    <Content Include="images\IMG_4141_final.png" />
+    <Content Include="images\IMG_4320_final.png" />
+    <Content Include="images\IMG_4325_final.png" />
+    <Content Include="images\IMG_4338.png" />
+    <Content Include="images\IMG_4530_final.png" />
+    <Content Include="images\IMG_4546_final.png" />
+    <Content Include="images\IMG_4553_final.png" />
+    <Content Include="images\IMG_4573_final.png" />
+    <Content Include="images\IMG_4717_final.png" />
+    <Content Include="images\IMG_4722_final.png" />
+    <Content Include="images\IMG_4790_final.png" />
+    <Content Include="images\IMG_5025_final.png" />
+    <Content Include="images\IMG_5042_final.png" />
+    <Content Include="images\IMG_5046_final.png" />
+    <Content Include="images\IMG_5098_final.png" />
+    <Content Include="images\IMG_5205_final.png" />
+    <Content Include="images\IMG_5211_final.png" />
+    <Content Include="images\IMG_5244.png" />
+    <Content Include="images\IMG_5296.png" />
+    <Content Include="images\IMG_5331_final.png" />
+    <Content Include="images\IMG_5760_final.png" />
+    <Content Include="images\IMG_5783_final.png" />
+    <Content Include="images\IMG_5930_final.png" />
+    <Content Include="images\IMG_6081_final.png" />
+    <Content Include="images\IMG_6088_final.png" />
+    <Content Include="images\IMG_6097_final.png" />
+    <Content Include="images\IMG_6103_final.png" />
+    <Content Include="images\IMG_6115-Bearbeitet_final.png" />
+    <Content Include="images\IMG_6151_final.png" />
+    <Content Include="images\IMG_6160_final.png" />
+    <Content Include="images\IMG_6175_final.png" />
+    <Content Include="images\IMG_6207_final.png" />
+    <Content Include="images\IMG_6294_final.png" />
+    <Content Include="images\IMG_6438_final.png" />
+    <Content Include="images\IMG_7230_final.png" />
+    <Content Include="images\IMG_7524_final.png" />
+    <Content Include="images\IMG_7534_final.png" />
+    <Content Include="images\IMG_7607_final.png" />
+    <Content Include="images\IMG_7884_final.png" />
+    <Content Include="images\IMG_7906_final.png" />
+    <Content Include="images\IMG_7962_final.png" />
+    <Content Include="images\IMG_8071_final.png" />
+    <Content Include="images\IMG_8237_final.png" />
+    <Content Include="images\IMG_8299_final.png" />
+    <Content Include="images\IMG_8355_final.png" />
+    <Content Include="images\IMG_8504_final.png" />
+    <Content Include="images\IMG_8607_final.png" />
+    <Content Include="images\IMG_8621_final.png" />
+    <Content Include="images\IMG_8641_final.png" />
+    <Content Include="images\IMG_8668_final.png" />
+    <Content Include="images\IMG_8712_final.png" />
+    <Content Include="images\IMG_8714_final.png" />
+    <Content Include="images\IMG_8851_final.png" />
+    <Content Include="images\IMG_9084.png" />
+    <Content Include="images\IMG_9119.png" />
+    <Content Include="images\IMG_9136.png" />
+    <Content Include="images\IMG_9176.png" />
+    <Content Include="images\IMG_9183_final.png" />
+    <Content Include="images\IMG_9298_final.png" />
+    <Content Include="images\IMG_9300_final.png" />
+    <Content Include="images\IMG_9312_final.png" />
+    <Content Include="images\IMG_9316.png" />
+    <Content Include="images\IMG_9318_final.png" />
+    <Content Include="images\IMG_9329_final.png" />
+    <Content Include="images\IMG_9359_final.png" />
+    <Content Include="images\IMG_9374_final.png" />
+    <Content Include="images\IMG_9384_final.png" />
+    <Content Include="images\IMG_9388_final.png" />
+    <Content Include="images\IMG_9409_final.png" />
+    <Content Include="images\IMG_9421_final.png" />
+    <Content Include="images\IMG_9438_final.png" />
+    <Content Include="images\IMG_9447_final.png" />
+    <Content Include="images\IMG_9453_final.png" />
+    <Content Include="images\IMG_9472_final.png" />
+    <Content Include="images\IMG_9479_final.png" />
+    <Content Include="images\IMG_9483.png" />
+    <Content Include="images\IMG_9488.png" />
+    <Content Include="images\jpg-document-interface-symbol.svg" />
+    <Content Include="images\levitation_final.png" />
+    <Content Include="images\list-document-interface-symbol-1.svg" />
+    <Content Include="images\list-document-interface-symbol.svg" />
+    <Content Include="images\magnifier-search-symbol-on-a-bars-graphic.svg" />
+    <Content Include="images\monthly-calendar-page.svg" />
+    <Content Include="images\movie-strip-with-play-sign.svg" />
+    <Content Include="images\music-document-interface-symbol-of-a-paper-sheet-with-a-musical-note-in-it.svg" />
+    <Content Include="images\news-document-symbol.svg" />
+    <Content Include="images\panorama_final.png" />
+    <Content Include="images\pdf-document-interface-symbol.svg" />
+    <Content Include="images\person-male-shape.svg" />
+    <Content Include="images\photo-document-interface-symbol.svg" />
+    <Content Include="images\photo-interface-symbol-with-mountains-and-moon-view-in-a-rectangle.svg" />
+    <Content Include="images\png-image-document-symbol.svg" />
+    <Content Include="images\printer-tool-or-interface-symbol-for-print-button.svg" />
+    <Content Include="images\richardkramer__52frames-2.png" />
+    <Content Include="images\richardkramer__52frames-3.png" />
+    <Content Include="images\richardkramer__52frames-4.png" />
+    <Content Include="images\richardkramer__52frames.png" />
+    <Content Include="images\search-code-interface-symbol-of-a-magnifier-with-binary-code-numbers.svg" />
+    <Content Include="images\search-for-staff.svg" />
+    <Content Include="images\search-in-a-chart-or-for-a-chart-interface-symbol.svg" />
+    <Content Include="images\search-signal-interface-symbol.svg" />
+    <Content Include="images\server-connection-interface-symbol.svg" />
+    <Content Include="images\server-connection-settings-interface-symbol.svg" />
+    <Content Include="images\server-connection.svg" />
+    <Content Include="images\server-interface-symbol.svg" />
+    <Content Include="images\server-locked-interface-symbol.svg" />
+    <Content Include="images\server-manager.svg" />
+    <Content Include="images\server-search-interface-symbol.svg" />
+    <Content Include="images\server-settings-interface-symbol.svg" />
+    <Content Include="images\server-tool.svg" />
+    <Content Include="images\servers-interface-symbol.svg" />
+    <Content Include="images\shared-signal-interface-symbol.svg" />
+    <Content Include="images\smoke_final.png" />
+    <Content Include="images\ssd.svg" />
+    <Content Include="images\staff-data-folder-interface-symbol.svg" />
+    <Content Include="images\staff-people-group-in-a-circular-arrow.svg" />
+    <Content Include="images\staff-symbol.svg" />
+    <Content Include="images\stats-document.svg" />
+    <Content Include="images\STA_3612.png" />
+    <Content Include="images\sunrise.png" />
+    <Content Include="images\table-document-interface-symbol.svg" />
+    <Content Include="images\telephone-directory-interface-symbol.svg" />
+    <Content Include="images\text-file-interface-symbol.svg" />
+    <Content Include="images\trails.png" />
+    <Content Include="images\trash-document-interface-symbol.svg" />
+    <Content Include="images\txt-document-interface-symbol-for-text-files.svg" />
+    <Content Include="images\upload-to-the-cloud-interface-symbol.svg" />
+    <Content Include="images\usb-device-with-signal.svg" />
+    <Content Include="images\verified-document-interface-symbol.svg" />
+    <Content Include="images\video-document-interface-symbol.svg" />
+    <Content Include="images\world-data-interface-symbol.svg" />
+    <Content Include="images\zip-document-interface-symbol-of-compressed-files.svg" />
+    <Content Include="images\Zwinger-2.png" />
+    <Content Include="images\zwinger_final-2.png" />
+    <Content Include="images\zwinger_final.png" />
+    <Content Include="images\_MG_0005_final.png" />
+    <Content Include="images\_MG_0055.png" />
+    <Content Include="images\_MG_0072.png" />
+    <Content Include="images\_MG_0101_final.png" />
+    <Content Include="images\_MG_0159_final.png" />
+    <Content Include="images\_MG_0178_final.png" />
+    <Content Include="images\_MG_0198.png" />
+    <Content Include="images\_MG_0222_final.png" />
+    <Content Include="images\_MG_0236_final.png" />
+    <Content Include="images\_MG_0241_final.png" />
+    <Content Include="images\_MG_0258_final.png" />
+    <Content Include="images\_MG_0286_final.png" />
+    <Content Include="images\_MG_0714_final.png" />
+    <Content Include="images\_MG_1003_final.png" />
+    <Content Include="images\_MG_1041_final.png" />
+    <Content Include="images\_MG_1063_final.png" />
+    <Content Include="images\_MG_1097_final.png" />
+    <Content Include="images\_MG_1143_final.png" />
+    <Content Include="images\_MG_1160_final.png" />
+    <Content Include="images\_MG_1162_final.png" />
+    <Content Include="images\_MG_1172_final.png" />
+    <Content Include="images\_MG_1173_final.png" />
+    <Content Include="images\_MG_1174_final.png" />
+    <Content Include="images\_MG_1177_final.png" />
+    <Content Include="images\_MG_1228_final.png" />
+    <Content Include="images\_MG_1279_final.png" />
+    <Content Include="images\_MG_1321_final.png" />
+    <Content Include="images\_MG_1327_final.png" />
+    <Content Include="images\_MG_1398_final.png" />
+    <Content Include="images\_MG_1448_final.png" />
+    <Content Include="images\_MG_1470_final.png" />
+    <Content Include="images\_MG_1533_final.png" />
+    <Content Include="images\_MG_1616_final.png" />
+    <Content Include="images\_MG_1618_final.png" />
+    <Content Include="images\_MG_1633_final.png" />
+    <Content Include="images\_MG_1652_final.png" />
+    <Content Include="images\_MG_1653_final.png" />
+    <Content Include="images\_MG_1656_final.png" />
+    <Content Include="images\_MG_1660_final.png" />
+    <Content Include="images\_MG_1661_final.png" />
+    <Content Include="images\_MG_1663_final.png" />
+    <Content Include="images\_MG_1675_final.png" />
+    <Content Include="images\_MG_1681_final.png" />
+    <Content Include="images\_MG_1684_final.png" />
+    <Content Include="images\_MG_1685_final.png" />
+    <Content Include="images\_MG_1690_final.png" />
+    <Content Include="images\_MG_1703_final.png" />
+    <Content Include="images\_MG_1727_final.png" />
+    <Content Include="images\_MG_1730_final.png" />
+    <Content Include="images\_MG_1775_final.png" />
+    <Content Include="images\_MG_1777_final.png" />
+    <Content Include="images\_MG_1780_final.png" />
+    <Content Include="images\_MG_1802_final.png" />
+    <Content Include="images\_MG_1872_final.png" />
+    <Content Include="images\_MG_1877_final.png" />
+    <Content Include="images\_MG_1930_final.png" />
+    <Content Include="images\_MG_1951.png" />
+    <Content Include="images\_MG_2111-2.png" />
+    <Content Include="images\_MG_2112-2.png" />
+    <Content Include="images\_MG_2116-2.png" />
+    <Content Include="images\_MG_2269.png" />
+    <Content Include="images\_MG_2273.png" />
+    <Content Include="images\_MG_2306.png" />
+    <Content Include="images\_MG_2311.png" />
+    <Content Include="images\_MG_2317.png" />
+    <Content Include="images\_MG_2340.png" />
+    <Content Include="images\_MG_2373.png" />
+    <Content Include="images\_MG_2376.png" />
+    <Content Include="images\_MG_2378.png" />
+    <Content Include="images\_MG_2399.png" />
+    <Content Include="images\_MG_2405.png" />
+    <Content Include="images\_MG_2415.png" />
+    <Content Include="images\_MG_2487.png" />
+    <Content Include="images\_MG_2500.png" />
+    <Content Include="images\_MG_2530.png" />
+    <Content Include="images\_MG_2687_final.png" />
+    <Content Include="images\_MG_2695_final.png" />
+    <Content Include="images\_MG_2721_final.png" />
+    <Content Include="images\_MG_2780_final.png" />
+    <Content Include="images\_MG_2794_final.png" />
+    <Content Include="images\_MG_2831_final.png" />
+    <Content Include="images\_MG_2835_final.png" />
+    <Content Include="images\_MG_2850_final.png" />
+    <Content Include="images\_MG_2855_final.png" />
+    <Content Include="images\_MG_2883_final.png" />
+    <Content Include="images\_MG_2900_final.png" />
+    <Content Include="images\_MG_2911_final.png" />
+    <Content Include="images\_MG_9543.png" />
+    <Content Include="images\_MG_9567_final.png" />
+    <Content Include="images\_MG_9586_final.png" />
+    <Content Include="images\_MG_9647.png" />
+    <Content Include="images\_MG_9692_final.png" />
+    <Content Include="images\_MG_9744_final.png" />
+    <Content Include="images\_MG_9777_final.png" />
+    <Content Include="images\_MG_9790_final.png" />
+    <Content Include="images\_MG_9791_final.png" />
+    <Content Include="images\_MG_9855_final.png" />
+    <Content Include="images\_MG_9887_final.png" />
+    <Content Include="images\_MG_9982_final.png" />
+    <Content Include="images\_MG_9987_final.png" />
+    <Content Include="images\_MG_9991_final.png" />
+    <Content Include="images\_MG_9992_final.png" />
+    <Content Include="images\_MG_9996_final.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ImageController.cs" />
+    <Compile Include="DataPersistenceLayer\ImageContext.cs" />
+    <Compile Include="Interfaces\IImageRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\SourceImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Views\ImagesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
     <None Include="packages.config" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Image\Create.cshtml" />
+    <Content Include="Views\Image\Delete.cshtml" />
+    <Content Include="Views\Image\Details.cshtml" />
+    <Content Include="Views\Image\Edit.cshtml" />
     <Content Include="Views\Image\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -116,7 +679,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -147,8 +709,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.8.2\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
