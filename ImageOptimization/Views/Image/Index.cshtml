@@ -1,51 +1,71 @@
 ﻿@model IEnumerable<ImageOptimization.Models.SourceImage>
 
 @{
-    ViewBag.Title = "Index";
+        /**/
+
+        ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+  @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
+
+@if (Model.Any())
+{
+  <table class="table">
     <tr>
-        <th>
+      <th>
+        Image
+      </th>
+      @*<th>
             @Html.DisplayNameFor(model => model.AbsolutePath)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.RelativePath)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FileName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AltText)
-        </th>
-        <th></th>
+        </th>*@
+      <th>
+        @Html.DisplayNameFor(model => model.FileName)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.AltText)
+      </th>
+      <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.AbsolutePath)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RelativePath)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FileName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AltText)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
+    @foreach (var item in Model)
+    {
+<tr>
+  <td>
+    <a href="@Url.Action("Details", "Details", new { id = item.ID })">
+      <img class="img img-overview" src="@Html.DisplayFor(modelItem => item.RelativePath)" alt="@Html.DisplayFor(modelItem => item.AltText)" />
+    </a>
+  </td>
+  @*<td>
+      @Html.DisplayFor(modelItem => item.AbsolutePath)
+    </td>
+    <td>
+      @Html.DisplayFor(modelItem => item.RelativePath)
+    </td>*@
+  <td>
+    @Html.DisplayFor(modelItem => item.FileName)
+  </td>
+  <td>
+    @Html.DisplayFor(modelItem => item.AltText)
+  </td>
+  <td>
+    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+  </td>
+</tr>
 }
 
-</table>
+  </table>
+
+}
+else
+{
+  <p>There is no data in the database! Did you forgot to load up the Images? For more information refer to <kbd>README</kbd></p>
+}

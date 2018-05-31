@@ -658,7 +658,6 @@
     <Compile Include="Models\SourceImage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\FileService.cs" />
-    <Compile Include="Views\ImagesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />

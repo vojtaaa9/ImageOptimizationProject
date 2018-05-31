@@ -18,32 +18,6 @@ namespace ImageOptimization.Controllers
             return View(db.SourceImages.ToList());
         }
 
-        public string Seed()
-        {
-            string[] fileEntries = FileService.GetAllFilesInDir(Server.MapPath("~/images"));
-
-            SourceImage[] imageEntities = new SourceImage[fileEntries.Length];
-
-            int i = 0;
-            foreach (string path in fileEntries)
-            {
-                var image = new SourceImage()
-                {
-                    AbsolutePath = path,
-                    FileName = "TODO",
-                    RelativePath = "/images/" + "TODO",
-                    AltText = "nope"
-                };
-
-                imageEntities.SetValue(image, i);
-                i++;
-            }
-
-            db.SourceImages.AddRange(imageEntities);
-            db.SaveChanges();
-            return "success";
-        }
-
         // GET: Image/Details/5
         public ActionResult Details(int? id)
         {

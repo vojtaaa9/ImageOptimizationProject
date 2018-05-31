@@ -12,3 +12,12 @@ body {
   margin: 0 auto;
   max-width: 45em;
 }
+
+.img {
+  width: 100%;
+  height: auto;
+}
+
+.img-overview {
+  max-width: 16em;
+}
