@@ -5,7 +5,7 @@
 body {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: inherit;
-  padding: 0;
+  margin: 0;
 }
 
 .well {
@@ -23,8 +23,15 @@ body {
 }
 
 .img-detail {
-  max-height: 45vh;
-  overflow-y: hidden;
+  object-position: center;
+  object-fit: cover;
+  height: 60vh;
+}
+
+.right {
+  float: right;
+}
+
+table {
   width: 100%;
-  max-width: 100%;
 }

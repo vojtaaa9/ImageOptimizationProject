@@ -1,22 +1,51 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using ImageOptimization.DataPersistenceLayer;
 using ImageOptimization.Models;
 using ImageOptimization.Services;
+using ImageOptimization.ViewModels;
 
 namespace ImageOptimization.Controllers
 {
     public class ImageController : Controller
     {
         private ImageContext db = new ImageContext();
-        private ImageService imageService = new ImageService();
+        private readonly ImageService imageService = new ImageService();
 
         // GET: Image
-        public ActionResult Index()
+        public ActionResult Index(int count = 30, int page = 0)
         {
-            return View(db.SourceImages.ToList());
+            if (page < 0)
+                page = -1;
+
+            int total = db.SourceImages.Count();
+
+            if (page > (total - count) / count)
+                page = -1;
+
+            if (page == -1)
+            {
+
+                // return empty list which shows warning
+                return View(new ListSourceImageViewModel() { Page = 0, ImageItems = new List<SourceImage>() });
+            }
+
+            List<SourceImage> pageItems = db.SourceImages
+                .OrderBy(i => i.FileName)
+                .Skip(page * count)
+                .Take(count)
+                .ToList();
+
+            var vm = new ListSourceImageViewModel()
+            {
+                Page = page,
+                ImageItems = pageItems
+            };
+
+            return View(vm);
         }
 
         // GET: Image/Details/5

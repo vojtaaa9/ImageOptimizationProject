@@ -1,71 +1,75 @@
-﻿@model IEnumerable<ImageOptimization.Models.SourceImage>
+﻿@model ImageOptimization.ViewModels.ListSourceImageViewModel
 
 @{
-        /**/
+  /**/
 
-        ViewBag.Title = "Index";
+  ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<div class="well">
+  <h1>Image Optimization project</h1>
+  <h2>Index, Page: @Model.Page</h2>
 
-<p>
-  @Html.ActionLink("Create New", "Create")
-</p>
+  <p>
+    @Html.ActionLink("Create New", "Create")
+  </p>
 
-@if (Model.Any())
-{
-  <table class="table">
-    <tr>
-      <th>
-        Image
-      </th>
-      @*<th>
-            @Html.DisplayNameFor(model => model.AbsolutePath)
+  @if (Model.ImageItems.Any())
+  {
+    <table class="table">
+      <tr>
+        <th>
+          Image
+        </th>
+        @*<th>
+              @Html.DisplayNameFor(model => model.ImageItems.First().AbsolutePath)
+          </th>
+          <th>
+              @Html.DisplayNameFor(model => model.ImageItems.First().RelativePath)
+          </th>*@
+        <th>
+          @Html.DisplayNameFor(model => model.ImageItems.First().FileName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RelativePath)
-        </th>*@
-      <th>
-        @Html.DisplayNameFor(model => model.FileName)
-      </th>
-      <th>
-        @Html.DisplayNameFor(model => model.AltText)
-      </th>
-      <th></th>
-    </tr>
+          @Html.DisplayNameFor(model => model.ImageItems.First().AltText)
+        </th>
+        <th></th>
+      </tr>
 
-    @foreach (var item in Model)
-    {
-<tr>
-  <td>
-    <a href="@Url.Action("Details", "Image", new { id = item.ID })">
-      <img class="img img-overview" src="@Html.DisplayFor(modelItem => item.RelativePath)" alt="@Html.DisplayFor(modelItem => item.AltText)" />
-    </a>
-  </td>
-  @*<td>
-      @Html.DisplayFor(modelItem => item.AbsolutePath)
-    </td>
-    <td>
-      @Html.DisplayFor(modelItem => item.RelativePath)
-    </td>*@
-  <td>
-    @Html.DisplayFor(modelItem => item.FileName)
-  </td>
-  <td>
-    @Html.DisplayFor(modelItem => item.AltText)
-  </td>
-  <td>
-    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-  </td>
-</tr>
-}
+      @foreach (var item in Model.ImageItems)
+      {
+        <tr>
+          <td>
+            <a href="@Url.Action("Details", "Image", new { id = item.ID })">
+              <img class="img img-overview" src="@Html.DisplayFor(modelItem => item.RelativePath)" alt="@Html.DisplayFor(modelItem => item.AltText)" />
+            </a>
+          </td>
+          @*<td>
+              @Html.DisplayFor(modelItem => item.AbsolutePath)
+            </td>
+            <td>
+              @Html.DisplayFor(modelItem => item.RelativePath)
+            </td>*@
+          <td>
+            @Html.DisplayFor(modelItem => item.FileName)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.AltText)
+          </td>
+          <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+          </td>
+        </tr>
+      }
 
-  </table>
-
-}
-else
-{
-  <p>There is no data in the database! Did you forgot to load up the Images? For more information refer to <kbd>README</kbd></p>
-}
+    </table>
+    <a class="right" href="@Url.Action("Index","Image", new {Page = Model.Page+1})">Next</a>
+    <a href="@Url.Action("Index","Image", new {Page = Model.Page-1})">Before</a>
+  }
+  else
+  {
+    <p>There is no data in the database or you are on page with no data! Did you forgot to load up the Images? For more information refer to <kbd>README</kbd></p>
+    <p> <a href="@Url.Action("Index","Image", new {Page = Model.Page})">Home</a></p>
+  }
+</div>
