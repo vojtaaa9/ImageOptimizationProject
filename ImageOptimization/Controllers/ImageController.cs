@@ -7,6 +7,7 @@ using ImageOptimization.DataPersistenceLayer;
 using ImageOptimization.Models;
 using ImageOptimization.Services;
 using ImageOptimization.ViewModels;
+using NetVips;
 
 namespace ImageOptimization.Controllers
 {
@@ -18,17 +19,18 @@ namespace ImageOptimization.Controllers
         // GET: Image
         public ActionResult Index(int count = 30, int page = 0)
         {
+            // If page is lower than 1, reset
             if (page < 0)
                 page = -1;
 
             int total = db.SourceImages.Count();
 
+            // If page is higher than total pages count
             if (page > (total - count) / count)
                 page = -1;
 
             if (page == -1)
             {
-
                 // return empty list which shows warning
                 return View(new ListSourceImageViewModel() { Page = 0, ImageItems = new List<SourceImage>() });
             }
@@ -144,6 +146,17 @@ namespace ImageOptimization.Controllers
             db.SourceImages.Remove(sourceImage);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        // GET: Image/TestVips
+        public ActionResult TestVips()
+        {
+            string result = ModuleInitializer.VipsInitialized
+            ? $"Inited libvips {Base.Version(0)}.{Base.Version(1)}.{Base.Version(2)}"
+            : "Unable to init libvips";
+            System.Diagnostics.Debug.WriteLine(result);
+
+            return View("TestVips", (object)result);
         }
 
         protected override void Dispose(bool disposing)
