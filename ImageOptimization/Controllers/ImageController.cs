@@ -11,6 +11,7 @@ namespace ImageOptimization.Controllers
     public class ImageController : Controller
     {
         private ImageContext db = new ImageContext();
+        private ImageService imageService = new ImageService();
 
         // GET: Image
         public ActionResult Index()
@@ -30,7 +31,10 @@ namespace ImageOptimization.Controllers
             {
                 return HttpNotFound();
             }
-            return View(sourceImage);
+
+            var sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage);
+
+            return View("Details", sourceImageViewModel);
         }
 
         // GET: Image/Create

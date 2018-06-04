@@ -21,3 +21,10 @@ body {
 .img-overview {
   max-width: 16em;
 }
+
+.img-detail {
+  max-height: 45vh;
+  overflow-y: hidden;
+  width: 100%;
+  max-width: 100%;
+}
