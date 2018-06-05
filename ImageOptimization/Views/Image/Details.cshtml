@@ -9,11 +9,12 @@
 <div class="well">
   <h4>@Model.FileName</h4>
   <hr />
-  <p>
-    @Html.ActionLink("« Back to List", "Index")
-  </p>
 
-  <p>More info coming</p>
+  <ul>
+    <li><b>Format:</b> @Model.FileFormat</li>
+    <li><b>Width:</b> @Model.Width</li>
+    <li><b>Height:</b> @Model.Height</li>
+  </ul>
 
   <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |

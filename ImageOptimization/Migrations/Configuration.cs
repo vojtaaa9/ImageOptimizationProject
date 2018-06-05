@@ -8,6 +8,7 @@ namespace ImageOptimization.Migrations
     using System.Reflection;
     using System.Web;
     using System.Web.Hosting;
+    using System.Collections.Generic;
 
     internal sealed class Configuration : DbMigrationsConfiguration<DataPersistenceLayer.ImageContext>
     {
@@ -32,7 +33,8 @@ namespace ImageOptimization.Migrations
                     AbsolutePath = path,
                     FileName = Path.GetFileName(path),
                     RelativePath = "/images/" + Path.GetFileName(path),
-                    AltText = Path.GetFileNameWithoutExtension(path)
+                    AltText = Path.GetFileNameWithoutExtension(path),
+                    Thumbnails = new List<ThumbImage>()
                 };
 
                 imageEntities.SetValue(image, i);

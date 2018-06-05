@@ -2,6 +2,11 @@
 
 This repository contains all sources to sample web application, where different optimization techniques will be tested. It is made simple for testing images in the web, there is no specific coding style, no tests, yet if you are familiar with ASP.NET MVC Development, you should feel home.
 
+**Requirements:**
+
+* .NET Framework 4.7
+* Visual Studio 2017
+
 
 ## Image Dataset
 
@@ -38,4 +43,6 @@ If you see something like this: ```vips-8.6.3-Thu Mar  8 15:18:35 UTC 2018 ```, 
 
 ## Troubleshooting
 
-Make sure `libvips` ist installed correctly. If you have problems regarding assemblies and can't even start up the application, make sure, that you are building against `x64`. In Solution Explorer right-click Project > Properties > Select Web and at Server Section set Bitness to x64. This is because libvips can't run on 32 bit server.
+Make sure `libvips` is installed correctly. If you have problems regarding assemblies and can't even start up the application, make sure, that you are building against `x64`. In Solution Explorer right-click Project > Properties > Select Web and at Server Section set Bitness to x64. This is because libvips can't run on 32 bit server.
+
+**Messed up the database?** Just run `Update-Database -TargetMigration:0 -force` from Package Manager Console. This will wipe all data and you will have fresh start. With `Update-Database` Entity Framework will generate all migrations and apply them to the database.

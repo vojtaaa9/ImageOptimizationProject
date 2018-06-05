@@ -32,19 +32,46 @@ namespace ImageOptimization.Controllers
             if (page == -1)
             {
                 // return empty list which shows warning
-                return View(new ListSourceImageViewModel() { Page = 0, ImageItems = new List<SourceImage>() });
+                return View(new ListSourceImageViewModel() { Page = 0, ImageItems = new List<ThumbImage>() });
             }
 
-            List<SourceImage> pageItems = db.SourceImages
+            // Load 30 SourceImages according to current page
+            List<SourceImage> sourceImages = db.SourceImages
+                .Include(i => i.Thumbnails)
                 .OrderBy(i => i.FileName)
                 .Skip(page * count)
                 .Take(count)
                 .ToList();
 
+            // Save References to thumbnails
+            List<ThumbImage> thumbnails = new List<ThumbImage>();
+
+            foreach (var image in sourceImages)
+            {
+                var thumbnail = image.GetThumbnail(256, 256);
+
+                // If no thumbnail exists, let vips generate a new one
+                if (thumbnail == null)
+                {
+                    ThumbImage thumbImage = ImageService.GenerateThumbnail(image, 256, 256);
+                    image.Thumbnails.Add(thumbImage);
+                    // Save new thumbnail to db
+                    db.ThumbImages.Add(thumbImage);
+                    db.Entry(image).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    // Set the Thumbnail
+                    thumbnail = thumbImage;
+                }
+                // Add it to colletion of thumbnails
+                thumbnails.Add(thumbnail);
+            }
+
+            // Set Data to viewmodel
             var vm = new ListSourceImageViewModel()
             {
                 Page = page,
-                ImageItems = pageItems
+                ImageItems = thumbnails
             };
 
             return View(vm);
@@ -62,6 +89,19 @@ namespace ImageOptimization.Controllers
             {
                 return HttpNotFound();
             }
+
+            // Update Data on Detail view, which cant be inserted into db at seed time
+            Image VipsImage = Image.NewFromFile(sourceImage.AbsolutePath);
+
+            sourceImage.Width = VipsImage.Width;
+            sourceImage.Height = VipsImage.Height;
+            sourceImage.Format = VipsImage.Format;
+
+            // Update State and Save Async
+            db.Entry(sourceImage).State = EntityState.Modified;
+            db.SaveChangesAsync();
+
+            Image thumbnail = VipsImage.ThumbnailImage(1920, null, "down", true);
 
             var sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage);
 
