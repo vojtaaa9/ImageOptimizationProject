@@ -34,7 +34,8 @@ namespace ImageOptimization.Migrations
                     FileName = Path.GetFileName(path),
                     RelativePath = "/images/" + Path.GetFileName(path),
                     AltText = Path.GetFileNameWithoutExtension(path),
-                    Thumbnails = new List<ThumbImage>()
+                    Thumbnails = new List<ThumbImage>(),
+                    Format = Path.GetExtension(path)
                 };
 
                 imageEntities.SetValue(image, i);

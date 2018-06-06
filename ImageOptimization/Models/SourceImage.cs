@@ -21,12 +21,38 @@ namespace ImageOptimization.Models
 
         public virtual List<ThumbImage> Thumbnails { get; set; }
 
-        internal ThumbImage GetThumbnail(int width, int height)
+        /// <summary>
+        /// Get's Thumbnail Model for specified width or height. SVG Files returns themselves in form of ThumbImage Model
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns>ThumbnailImage Model</returns>
+        internal ThumbImage GetThumbnail(int width, int height = 0)
         {
+            // SVG Format doesnt need any
+            if (Format.Equals(".svg"))
+                return GetThumbImage();
+
+            // If Thumbnail list is not initialized, return null
             if (Thumbnails == null)
                 return null;
 
-            return Thumbnails.Find(w => (w.Width == width && w.Height == height));
+            return Thumbnails.Find(w => (w.Width == width || w.Height == height));
+        }
+
+        private ThumbImage GetThumbImage()
+        {
+            return new ThumbImage()
+            {
+                ID = this.ID,
+                SourceImageID = this.ID,
+                FileName = this.FileName,
+                RelativePath = this.RelativePath,
+                AbsolutePath = this.AbsolutePath,
+                AltText = this.AltText,
+                Width = this.Width,
+                Height = this.Height
+            };
         }
     }
 }

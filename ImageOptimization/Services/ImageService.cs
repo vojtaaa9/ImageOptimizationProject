@@ -10,10 +10,11 @@ namespace ImageOptimization.Services
 {
     public class ImageService
     {
-        public static SourceImageViewModel GetSourceImageViewModel(SourceImage sourceImage)
+        public static SourceImageViewModel GetSourceImageViewModel(SourceImage sourceImage, int width = 0, int height = 0)
         {
             if (sourceImage == null)
                 return null;
+
 
             return new SourceImageViewModel()
             {
@@ -34,7 +35,7 @@ namespace ImageOptimization.Services
         /// <param name="width">Width of the image</param>
         /// <param name="height">Height of the image</param>
         /// <returns></returns>
-        internal static ThumbImage GenerateThumbnail(SourceImage src, int width, int height)
+        internal static ThumbImage GenerateThumbnail(SourceImage src, int width, int? height)
         {
             // Checks, if the file exists
             if (src == null && File.Exists(src.AbsolutePath))
@@ -43,7 +44,7 @@ namespace ImageOptimization.Services
             // Create Thumbnail using vips
             Image thumbnail = Image.Thumbnail(src.AbsolutePath, width, height, "down", true);
             string AppDataFolder = HostingEnvironment.MapPath("~/images");
-            string FileName = $"th_{width}x{height}_{src.FileName}";
+            string FileName = $"th_{thumbnail.Width}x{thumbnail.Height}_{src.FileName}";
             string path = $"{AppDataFolder}\\{FileName}";
 
             // Create corresponding file
@@ -65,8 +66,8 @@ namespace ImageOptimization.Services
                 AltText = src.AltText,
                 FileName = FileName,
                 RelativePath = $"/images/{FileName}",
-                Height = height,
-                Width = width,
+                Height = thumbnail.Height,
+                Width = thumbnail.Width,
                 SourceImageID = src.ID
             };
 

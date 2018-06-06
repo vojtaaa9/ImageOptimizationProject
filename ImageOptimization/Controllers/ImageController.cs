@@ -48,12 +48,12 @@ namespace ImageOptimization.Controllers
 
             foreach (var image in sourceImages)
             {
-                var thumbnail = image.GetThumbnail(256, 256);
+                ThumbImage thumbnail = image.GetThumbnail(256);
 
                 // If no thumbnail exists, let vips generate a new one
                 if (thumbnail == null)
                 {
-                    ThumbImage thumbImage = ImageService.GenerateThumbnail(image, 256, 256);
+                    ThumbImage thumbImage = ImageService.GenerateThumbnail(image, 256, null);
                     image.Thumbnails.Add(thumbImage);
                     // Save new thumbnail to db
                     db.ThumbImages.Add(thumbImage);
@@ -95,15 +95,27 @@ namespace ImageOptimization.Controllers
 
             sourceImage.Width = VipsImage.Width;
             sourceImage.Height = VipsImage.Height;
-            sourceImage.Format = VipsImage.Format;
 
-            // Update State and Save Async
-            db.Entry(sourceImage).State = EntityState.Modified;
-            db.SaveChangesAsync();
+            var thumbnail = sourceImage.GetThumbnail(1920);
 
-            Image thumbnail = VipsImage.ThumbnailImage(1920, null, "down", true);
+            // If no thumbnail exists, let vips generate a new one
+            if (thumbnail == null)
+            {
+                ThumbImage thumbImage = ImageService.GenerateThumbnail(sourceImage, 1920, null);
+                sourceImage.Thumbnails.Add(thumbImage);
+                // Save new thumbnail to db
+                db.ThumbImages.Add(thumbImage);
+                db.Entry(sourceImage).State = EntityState.Modified;
+                db.SaveChanges();
+
+                // Set the Thumbnail
+                thumbnail = thumbImage;
+            }
 
             var sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage);
+            sourceImageViewModel.ServerPath = thumbnail.RelativePath;
+            sourceImageViewModel.Width = thumbnail.Width;
+            sourceImageViewModel.Height = thumbnail.Height;
 
             return View("Details", sourceImageViewModel);
         }
