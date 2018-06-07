@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageOptimization.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -35,9 +36,23 @@ namespace ImageOptimization.Models
 
             // If Thumbnail list is not initialized, return null
             if (Thumbnails == null)
-                return null;
+                return new ThumbImage();
 
-            return Thumbnails.Find(w => (w.Width == width || w.Height == height));
+            // Get first thumbnail that matches dimensions
+            var thumbnail = Thumbnails.Find(w => (w.Width == width || w.Height == height));
+
+            // If any thumbnail is found, return it
+            if (thumbnail != null)
+                return thumbnail;
+
+            // no thumbnail exists, let vips generate a new one
+            thumbnail = ImageService.GenerateThumbnail(this, width, null);
+            this.Thumbnails.Add(thumbnail);
+
+            // Add it to list
+            Thumbnails.Add(thumbnail);
+
+            return thumbnail;
         }
 
         private ThumbImage GetThumbImage()

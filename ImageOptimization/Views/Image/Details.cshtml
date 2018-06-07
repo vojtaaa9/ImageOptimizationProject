@@ -4,7 +4,7 @@
     ViewBag.Title = "Details";
 }
 
-<img class="img img-detail" src="@Model.ServerPath" alt="@Model.AltText" width="@Model.Width.ToString()" height="@Model.Height.ToString()"/>
+<img class="img img-detail" src="@Model.FallbackPath" srcset="@Model.Sizes" alt="@Model.AltText" width="@Model.Width" height="@Model.Height"/>
 
 <div class="well">
   <h4>@Model.FileName</h4>
@@ -20,4 +20,12 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
     @Html.ActionLink("Delete", "Delete", new { id = Model.ID })
   </p>
+
+  <h4>Thumbnails</h4>
+  <ul>
+    @foreach(var thumbnail in Model.Thumbnails)
+    {
+    <li><b>Name:</b> <a href="@thumbnail.RelativePath">@thumbnail.FileName</a>, @thumbnail.Width x @thumbnail.Height</li>
+    }
+  </ul>
 </div>

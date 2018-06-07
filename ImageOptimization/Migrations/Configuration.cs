@@ -6,8 +6,6 @@ namespace ImageOptimization.Migrations
     using System.Data.Entity.Migrations;
     using System.IO;
     using System.Reflection;
-    using System.Web;
-    using System.Web.Hosting;
     using System.Collections.Generic;
 
     internal sealed class Configuration : DbMigrationsConfiguration<DataPersistenceLayer.ImageContext>
@@ -19,7 +17,7 @@ namespace ImageOptimization.Migrations
 
         protected override void Seed(DataPersistenceLayer.ImageContext context)
         {
-            String absoluteDir = MapPath("~/images");
+            String absoluteDir = MapPath("images");
             string[] fileEntries = FileService.GetAllFilesInDir(absoluteDir);
             
             SourceImage[] imageEntities = new SourceImage[fileEntries.Length];
@@ -44,22 +42,22 @@ namespace ImageOptimization.Migrations
 
             context.SourceImages.AddOrUpdate(imageEntities);
             context.SaveChanges();
+
+            // Create Directory for thumbnails
+            Directory.CreateDirectory(MapPath("thumbnails"));
         }
 
         /// <summary>
-        /// 
+        /// Manual mapping of absolute path.
         /// </summary>
         /// <param name="seedFile"></param>
-        /// <returns></returns>
-        private string MapPath(string seedFile)
+        /// <returns>Returns absolute path to project's directory and includes passed folder</returns>
+        private string MapPath(string folder)
         {
-            if (HttpContext.Current != null)
-                return HostingEnvironment.MapPath(seedFile);
-
             var absolutePath = new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath;
             var path = absolutePath.Remove(absolutePath.Length - "bin/ImageOptimization.DLL".Length); 
 
-            return path + "images";
+            return path + folder;
         }
     }
 }

@@ -15,9 +15,10 @@ namespace ImageOptimization.Controllers
     {
         private ImageContext db = new ImageContext();
         private readonly ImageService imageService = new ImageService();
+        private readonly int[] sizes = { 300, 600, 900, 1200, 1400, 1600, 1750, 1900 };
 
         // GET: Image
-        public ActionResult Index(int count = 30, int page = 0)
+        public ActionResult Index(int count = 10, int page = 0)
         {
             // If page is lower than 1, reset
             if (page < 0)
@@ -46,23 +47,15 @@ namespace ImageOptimization.Controllers
             // Save References to thumbnails
             List<ThumbImage> thumbnails = new List<ThumbImage>();
 
-            foreach (var image in sourceImages)
+            foreach (var sourceImage in sourceImages)
             {
-                ThumbImage thumbnail = image.GetThumbnail(256);
+                ThumbImage thumbnail = sourceImage.GetThumbnail(180);
 
-                // If no thumbnail exists, let vips generate a new one
-                if (thumbnail == null)
-                {
-                    ThumbImage thumbImage = ImageService.GenerateThumbnail(image, 256, null);
-                    image.Thumbnails.Add(thumbImage);
-                    // Save new thumbnail to db
-                    db.ThumbImages.Add(thumbImage);
-                    db.Entry(image).State = EntityState.Modified;
-                    db.SaveChanges();
+                // Save new thumbnail to db
+                db.ThumbImages.Add(thumbnail);
+                db.Entry(sourceImage).State = EntityState.Modified;
+                db.SaveChanges();
 
-                    // Set the Thumbnail
-                    thumbnail = thumbImage;
-                }
                 // Add it to colletion of thumbnails
                 thumbnails.Add(thumbnail);
             }
@@ -90,32 +83,24 @@ namespace ImageOptimization.Controllers
                 return HttpNotFound();
             }
 
-            // Update Data on Detail view, which cant be inserted into db at seed time
-            Image VipsImage = Image.NewFromFile(sourceImage.AbsolutePath);
+            //// Update Data on Detail view, which cant be inserted into db at seed time
+            //Image VipsImage = Image.NewFromFile(sourceImage.AbsolutePath);
 
-            sourceImage.Width = VipsImage.Width;
-            sourceImage.Height = VipsImage.Height;
+            //sourceImage.Width = VipsImage.Width;
+            //sourceImage.Height = VipsImage.Height;
 
-            var thumbnail = sourceImage.GetThumbnail(1920);
-
-            // If no thumbnail exists, let vips generate a new one
-            if (thumbnail == null)
+            // Generate set of 8 thumbnails
+            foreach (int size in sizes)
             {
-                ThumbImage thumbImage = ImageService.GenerateThumbnail(sourceImage, 1920, null);
-                sourceImage.Thumbnails.Add(thumbImage);
-                // Save new thumbnail to db
-                db.ThumbImages.Add(thumbImage);
-                db.Entry(sourceImage).State = EntityState.Modified;
-                db.SaveChanges();
-
-                // Set the Thumbnail
-                thumbnail = thumbImage;
+                sourceImage.GetThumbnail(size);
             }
+            db.Entry(sourceImage).State = EntityState.Modified;
+            db.SaveChanges();
 
-            var sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage);
-            sourceImageViewModel.ServerPath = thumbnail.RelativePath;
-            sourceImageViewModel.Width = thumbnail.Width;
-            sourceImageViewModel.Height = thumbnail.Height;
+
+            // Create ViewModel
+            SourceImageViewModel sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage);
+
 
             return View("Details", sourceImageViewModel);
         }
