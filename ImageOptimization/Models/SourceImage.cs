@@ -1,4 +1,5 @@
-﻿using ImageOptimization.Services;
+﻿using ImageOptimization.Enums;
+using ImageOptimization.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,7 @@ namespace ImageOptimization.Models
         public String AltText { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public String Format { get; set; }
+        public Format Format { get; set; }
 
         public virtual List<ThumbImage> Thumbnails { get; set; }
 
@@ -31,15 +32,18 @@ namespace ImageOptimization.Models
         internal ThumbImage GetThumbnail(int width, int height = 0)
         {
             // SVG Format doesnt need any
-            if (Format.Equals(".svg"))
+            if (Format == Format.SVG)
                 return GetThumbImage();
 
             // If Thumbnail list is not initialized, return null
             if (Thumbnails == null)
                 return new ThumbImage();
 
-            // Get first thumbnail that matches dimensions
-            var thumbnail = Thumbnails.Find(w => (w.Width == width || w.Height == height));
+            // Get first thumbnail that matches dimensions is chosen format
+            var thumbnail = Thumbnails.Find(
+                w => w.Format == Format
+                && (w.Width == width || w.Height == height)
+                );
 
             // If any thumbnail is found, return it
             if (thumbnail != null)
@@ -47,9 +51,6 @@ namespace ImageOptimization.Models
 
             // no thumbnail exists, let vips generate a new one
             thumbnail = ImageService.GenerateThumbnail(this, width, null);
-            this.Thumbnails.Add(thumbnail);
-
-            // Add it to list
             Thumbnails.Add(thumbnail);
 
             return thumbnail;

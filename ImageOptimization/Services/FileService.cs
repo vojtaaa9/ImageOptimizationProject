@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ImageOptimization.Enums;
+using System;
 using System.IO;
-using System.Linq;
-using System.Web;
 
 namespace ImageOptimization.Services
 {
     public class FileService
     {
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public FileService()
-        {
-
-        }
-
         /// <summary>
         /// Returns all files 
         /// </summary>
@@ -31,5 +20,54 @@ namespace ImageOptimization.Services
              return Directory.GetFiles(dir);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns>Whether a file was created or not</returns>
+        public static bool CreateFile(String filepath)
+        {
+            // If the file already exists, don't create new one
+            if (!File.Exists(filepath))
+            {
+                var file = File.Create(filepath);
+                file.Close();
+                return true;
+            }
+
+            return false;
+        }
+
+        public static String CombineDirectoryAndFilename(String path, String filename)
+        {
+            return $"{path}\\{filename}";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileEnding"></param>
+        /// <returns></returns>
+        public static Format ParseFileFormat(string fileEnding)
+        {
+            fileEnding = fileEnding.ToLower();
+
+            switch (fileEnding)
+            {
+                case ".svg":
+                    return Format.SVG;
+                case ".jpg":
+                case ".jpeg":
+                    return Format.JPEG;
+                case ".png":
+                    return Format.PNG;
+                case ".webp":
+                    return Format.WebP;
+                case ".gif":
+                    return Format.GIF;
+                default:
+                    return Format.Unknown;
+            }
+        }
     }
 }

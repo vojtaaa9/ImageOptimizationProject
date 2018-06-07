@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageOptimization.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace ImageOptimization.Models
@@ -17,5 +18,6 @@ namespace ImageOptimization.Models
         public String AltText { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public Format Format { get; set; }
     }
 }

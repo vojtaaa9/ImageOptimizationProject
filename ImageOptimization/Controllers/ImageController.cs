@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using ImageOptimization.DataPersistenceLayer;
+using ImageOptimization.Enums;
 using ImageOptimization.Models;
 using ImageOptimization.Services;
 using ImageOptimization.ViewModels;
@@ -83,11 +84,11 @@ namespace ImageOptimization.Controllers
                 return HttpNotFound();
             }
 
-            //// Update Data on Detail view, which cant be inserted into db at seed time
-            //Image VipsImage = Image.NewFromFile(sourceImage.AbsolutePath);
+            // Update Data on Detail view, which cant be inserted into db at seed time
+            Image VipsImage = Image.NewFromFile(sourceImage.AbsolutePath);
 
-            //sourceImage.Width = VipsImage.Width;
-            //sourceImage.Height = VipsImage.Height;
+            sourceImage.Width = VipsImage.Width;
+            sourceImage.Height = VipsImage.Height;
 
             // Generate set of 8 thumbnails
             foreach (int size in sizes)
@@ -97,12 +98,29 @@ namespace ImageOptimization.Controllers
             db.Entry(sourceImage).State = EntityState.Modified;
             db.SaveChanges();
 
-
             // Create ViewModel
             SourceImageViewModel sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage);
 
-
             return View("Details", sourceImageViewModel);
+        }
+
+        public ActionResult FormatTest(int? id, Format format)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            SourceImage sourceImage = db.SourceImages.Find(id);
+            if (sourceImage == null)
+            {
+                return HttpNotFound();
+            }
+
+
+            ThumbImage image = ImageService.ConvertToFormat(sourceImage, format);
+
+
+            return base.File(image.RelativePath, "image/"+format.ToString());
         }
 
         // GET: Image/Create
