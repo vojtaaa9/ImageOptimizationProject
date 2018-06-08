@@ -38,7 +38,8 @@ namespace ImageOptimization.Services
                 Height = sourceImage.Height.ToString(),
                 FileFormat = sourceImage.Format.ToString(),
                 Thumbnails = sourceImage.Thumbnails,
-                Sizes = sizes.ToString()
+                Sizes = sizes.ToString(),
+                FileSize = $"{(sourceImage.FileSize/1024)} kB, ({sourceImage.FileSize})"
             };
         }
 
@@ -50,7 +51,7 @@ namespace ImageOptimization.Services
         /// <param name="width">Width of the image</param>
         /// <param name="height">Optional Height of the image</param>
         /// <returns>Empty ThumbImage if no file exists or Created ThumbImage</returns>
-        internal static ThumbImage GenerateThumbnail(SourceImage src, int width, int? height)
+        internal static ThumbImage GenerateThumbnail(ThumbImage src, int width, int? height = null)
         {
             // Checks, if the file exists
             if (src == null && File.Exists(src.AbsolutePath))
@@ -65,13 +66,7 @@ namespace ImageOptimization.Services
             // Create corresponding file
             try
             {
-                // If the file already exists, don't create new one
-                if (!File.Exists(filePath))
-                {
-                    var file = File.Create(filePath);
-                    file.Close();
-                    thumbnail.WriteToFile(filePath);
-                }
+                thumbnail.WriteToFile(filePath);
             }
             catch (Exception e)
             {
@@ -94,11 +89,10 @@ namespace ImageOptimization.Services
             return thumb;
         }
 
-        public static ThumbImage ConvertToFormat(SourceImage sourceImage, Format format)
+        public static ThumbImage ConvertToFormat(SourceImage sourceImage, Format format, bool strip = false)
         {
             // Checks, if the file exists or convert isn't necessary
-            if (sourceImage == null && File.Exists(sourceImage.AbsolutePath) 
-                || sourceImage.Format == format)
+            if (sourceImage == null || (sourceImage == null && File.Exists(sourceImage.AbsolutePath)))
                 return new ThumbImage();
 
             // No uknown formats shall pass!
@@ -108,26 +102,27 @@ namespace ImageOptimization.Services
             // Create File
             String fileName = GenerateThumbnailFilename(sourceImage.Width, sourceImage.Height, sourceImage.AltText) + "." + format.ToString().ToLower();
             String filePath = FileService.CombineDirectoryAndFilename(GetThumbnailPath(), fileName);
-            FileService.CreateFile(filePath);
 
             // Load Image to Vips
             Image image = Image.NewFromFile(sourceImage.AbsolutePath);
 
-
             switch (format)
             {
                 case Format.JPEG:
-                    image.Jpegsave(filePath, null, 100, null, false, true, true, null, null, false, null, false);
+                    image.Jpegsave(filePath, null, 100, null, false, true, true, null, null, false, null, strip);
                     break;
                 case Format.GIF:
                     // TODO: Houston, we've got a problem! Vips cant handle GIFs
-                    image.Magicksave(filePath, "gif", 100);
+                    //image.Magicksave(filePath, "gif", 100);
                     break;
                 case Format.PNG:
-                    image.Pngsave(filePath, 0, false, strip: null);
+                    image.Pngsave(filePath, 0, false, strip: strip);
                     break;
                 case Format.WebP:
-                    image.Webpsave(filePath, null, 100, true, nearLossless: true, strip: false);
+                    image.Webpsave(filePath, null, 100, true, nearLossless: true, strip: strip);
+                    break;
+                case Format.TIFF:
+                    image.Tiffsave(filePath, strip: strip);
                     break;
             }
 

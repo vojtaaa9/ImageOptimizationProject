@@ -50,12 +50,15 @@ namespace ImageOptimization.Controllers
 
             foreach (var sourceImage in sourceImages)
             {
-                ThumbImage thumbnail = sourceImage.GetThumbnail(180);
+                ThumbImage thumbnail = sourceImage.GetThumbnailInFormat(Format.JPEG, 200);
 
-                // Save new thumbnail to db
-                db.ThumbImages.Add(thumbnail);
-                db.Entry(sourceImage).State = EntityState.Modified;
-                db.SaveChanges();
+                if (!db.ThumbImages.AsEnumerable().Contains(thumbnail))
+                {
+                    // Save new thumbnail to db
+                    db.ThumbImages.Add(thumbnail);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
 
                 // Add it to colletion of thumbnails
                 thumbnails.Add(thumbnail);
@@ -93,7 +96,7 @@ namespace ImageOptimization.Controllers
             // Generate set of 8 thumbnails
             foreach (int size in sizes)
             {
-                sourceImage.GetThumbnail(size);
+                sourceImage.GetThumbnailInFormat(Format.JPEG, size);
             }
             db.Entry(sourceImage).State = EntityState.Modified;
             db.SaveChanges();
@@ -104,7 +107,7 @@ namespace ImageOptimization.Controllers
             return View("Details", sourceImageViewModel);
         }
 
-        public ActionResult FormatTest(int? id, Format format)
+        public ActionResult FormatTest(int? id, Format format, bool strip)
         {
             if (id == null)
             {
@@ -116,11 +119,11 @@ namespace ImageOptimization.Controllers
                 return HttpNotFound();
             }
 
+            // Convert the Image
+            ThumbImage image = ImageService.ConvertToFormat(sourceImage, format, strip);
 
-            ThumbImage image = ImageService.ConvertToFormat(sourceImage, format);
-
-
-            return base.File(image.RelativePath, "image/"+format.ToString());
+            // Return the file back
+            return base.File(image.RelativePath, "image/"+format.ToString().ToLower());
         }
 
         // GET: Image/Create

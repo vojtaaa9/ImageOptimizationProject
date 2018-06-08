@@ -14,6 +14,7 @@ namespace ImageOptimization.ViewModels
         public String FileFormat { get; set; }
         public String AltText { get; set; }
         public String Sizes { get; set; }
+        public String FileSize { get; set; }
         public List<ThumbImage> Thumbnails { get; set; }
     }
 }

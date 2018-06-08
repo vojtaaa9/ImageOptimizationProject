@@ -14,6 +14,7 @@
     <li><b>Format:</b> @Model.FileFormat</li>
     <li><b>Width:</b> @Model.Width</li>
     <li><b>Height:</b> @Model.Height</li>
+    <li><b>Height:</b> @Model.FileSize</li>
   </ul>
 
   <p>
@@ -21,11 +22,48 @@
     @Html.ActionLink("Delete", "Delete", new { id = Model.ID })
   </p>
 
-  <h4>Thumbnails</h4>
+  <h4>Optimize #1: Resize</h4>
   <ul>
-    @foreach(var thumbnail in Model.Thumbnails)
+    @foreach (var thumbnail in Model.Thumbnails)
     {
-    <li><b>Name:</b> <a href="@thumbnail.RelativePath">@thumbnail.FileName</a>, @thumbnail.Width x @thumbnail.Height</li>
+      <li><b>Name:</b> <a href="@thumbnail.RelativePath">@thumbnail.FileName</a>, @thumbnail.Width x @thumbnail.Height</li>
     }
   </ul>
+
+  <h4>Optimize #2: Format change</h4>
+
+  @if (Model.FileFormat != "SVG")
+  {
+    <a href="/Image/FormatTest/@Model.ID?format=1&strip=false">TIFF Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=2&strip=false">GIF Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=3&strip=false">PNG Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=4&strip=false">JPEG Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=5&strip=false">WebP Format</a>
+  }
+  else
+  {
+    <p>Converting from SVG to anything else doesnt really make sense.</p>
+  }
+
+  <h4>Optimize #3: Compress Images</h4>
+
+
+  <h4>Optimize #4: Delete Metadata</h4>
+
+  @if (Model.FileFormat != "SVG")
+  {
+    <a href="/Image/FormatTest/@Model.ID?format=1&strip=true">TIFF Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=2&strip=true">GIF Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=3&strip=true">PNG Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=4&strip=true">JPEG Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=5&strip=true">WebP Format</a>
+  }
+  else
+  {
+    <a href="/Image/FormatTest/@Model.ID?format=6&strip=true">SVG Format</a>
+  }
+
+
+  <h4>Optimize #5: Send new format images</h4>
+  <p> Stuff about WebP</p>
 </div>

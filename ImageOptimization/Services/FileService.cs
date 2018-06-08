@@ -20,24 +20,6 @@ namespace ImageOptimization.Services
              return Directory.GetFiles(dir);
         }
 
-        /// <summary>
-        /// Creates a File in the specified path, if the file does not exists
-        /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns>Whether a file was created or not</returns>
-        public static bool CreateFile(String filepath)
-        {
-            // If the file already exists, don't create new one
-            if (!File.Exists(filepath))
-            {
-                var file = File.Create(filepath);
-                file.Close();
-                return true;
-            }
-
-            return false;
-        }
-
         public static String CombineDirectoryAndFilename(String path, String filename)
         {
             return $"{path}\\{filename}";

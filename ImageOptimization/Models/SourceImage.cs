@@ -20,6 +20,7 @@ namespace ImageOptimization.Models
         public int Width { get; set; }
         public int Height { get; set; }
         public Format Format { get; set; }
+        public long FileSize { get; set; }
 
         public virtual List<ThumbImage> Thumbnails { get; set; }
 
@@ -29,9 +30,9 @@ namespace ImageOptimization.Models
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns>ThumbnailImage Model</returns>
-        internal ThumbImage GetThumbnail(int width, int height = 0)
+        private ThumbImage GetThumbnail(int width, int height = 0)
         {
-            // SVG Format doesnt need any
+            // SVG Format doesnt need any thumbnail
             if (Format == Format.SVG)
                 return GetThumbImage();
 
@@ -50,7 +51,52 @@ namespace ImageOptimization.Models
                 return thumbnail;
 
             // no thumbnail exists, let vips generate a new one
-            thumbnail = ImageService.GenerateThumbnail(this, width, null);
+            thumbnail = ImageService.GenerateThumbnail(GetThumbImage(), width);
+            Thumbnails.Add(thumbnail);
+
+            return thumbnail;
+        }
+
+        internal ThumbImage GetThumbnailInFormat(Format format, int width, int height = 0)
+        {
+            // If no format change is requested
+            if (this.Format == format)
+                return GetThumbnail(width, height);
+
+            // If Thumbnail list is not initialized, return null
+            if (Thumbnails == null)
+                return new ThumbImage();
+
+            // Get first thumbnail that matches dimensions is chosen format
+            var thumbnail = Thumbnails.Find(
+                w => w.Format == format
+                && (w.Width == width || w.Height == height)
+                );
+
+            // If any thumbnail is found, return it
+            if (thumbnail != null)
+                return thumbnail;
+
+            // no thumbnail exists, let vips generate a new one
+            var converted = ImageService.ConvertToFormat(this, format);
+            thumbnail = ImageService.GenerateThumbnail(converted, width);
+            Thumbnails.Add(thumbnail);
+
+            return thumbnail;
+
+        }
+
+        internal ThumbImage GetImageInFormat(Format format)
+        {
+            // Get first thumbnail that matches dimensions is chosen format
+            var thumbnail = Thumbnails.Find(w => w.Format == format);
+
+            // If any thumbnail is found, return it
+            if (thumbnail != null)
+                return thumbnail;
+
+            // no thumbnail exists, let vips generate a new one
+            thumbnail = ImageService.ConvertToFormat(this, format);
             Thumbnails.Add(thumbnail);
 
             return thumbnail;
