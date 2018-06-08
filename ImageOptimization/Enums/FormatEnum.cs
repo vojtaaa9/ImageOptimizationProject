@@ -2,11 +2,12 @@
 {
     public enum Format
     {
-        SVG,
-        JPEG,
+        Unknown,
+        TIFF,
         GIF,
         PNG,
+        JPEG,
         WebP,
-        Unknown
+        SVG
     }
 }

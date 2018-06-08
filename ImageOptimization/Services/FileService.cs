@@ -7,10 +7,10 @@ namespace ImageOptimization.Services
     public class FileService
     {
         /// <summary>
-        /// Returns all files 
+        /// Returns all file paths
         /// </summary>
         /// <param name="dir">Path to the directory</param>
-        /// <returns></returns>
+        /// <returns>File paths in string array</returns>
         public static string[] GetAllFilesInDir(String dir)
         {
             // if directory does not exists, return null
@@ -21,7 +21,7 @@ namespace ImageOptimization.Services
         }
 
         /// <summary>
-        /// 
+        /// Creates a File in the specified path, if the file does not exists
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns>Whether a file was created or not</returns>
@@ -56,6 +56,8 @@ namespace ImageOptimization.Services
             {
                 case ".svg":
                     return Format.SVG;
+                case ".tif":
+                    return Format.TIFF;
                 case ".jpg":
                 case ".jpeg":
                     return Format.JPEG;
