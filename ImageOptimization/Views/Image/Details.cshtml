@@ -23,12 +23,19 @@
   </p>
 
   <h4>Optimize #1: Resize</h4>
-  <ul>
-    @foreach (var thumbnail in Model.Thumbnails)
-    {
-      <li><b>Name:</b> <a href="@thumbnail.RelativePath">@thumbnail.FileName</a>, @thumbnail.Width x @thumbnail.Height</li>
-    }
-  </ul>
+  @if (Model.FileFormat != "SVG")
+  {
+      <ul>
+      @foreach (var thumbnail in Model.Thumbnails)
+      {
+        <li><b>Name:</b> <a href="@thumbnail.RelativePath">@thumbnail.FileName</a>, @thumbnail.Width x @thumbnail.Height, @thumbnail.getFileSize()</li>
+      }
+      </ul>
+  }
+  else
+  {
+      <p>This is already the best format for resizing :)</p>
+  }
 
   <h4>Optimize #2: Format change</h4>
 
@@ -45,7 +52,19 @@
     <p>Converting from SVG to anything else doesnt really make sense.</p>
   }
 
-  <h4>Optimize #3: Compress Images</h4>
+  <h4>Optimize #3: Compress Images, Quality:75</h4>
+  @if(Model.FileFormat != "SVG")
+  {
+    <a href="/Image/FormatTest/@Model.ID?format=1&quality=75">TIFF Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=2&quality=75">GIF Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=3&quality=75">PNG Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=4&quality=75">JPEG Format</a>
+    <a href="/Image/FormatTest/@Model.ID?format=5&quality=75">WebP Format</a>
+  }
+  else
+  {
+      <p>.NET svgo optimizing not that good</p>
+  }
 
 
   <h4>Optimize #4: Delete Metadata</h4>
@@ -65,5 +84,13 @@
 
 
   <h4>Optimize #5: Send new format images</h4>
-  <p> Stuff about WebP</p>
+  @if(Model.FileFormat != "SVG")
+  {
+      <p>If you see the image below, your client supports webp</p>
+      <img src="@Url.Action("FormatTest", "Image", new { id = Model.ID, format = 5, strip = true})" alt="@Model.AltText" />
+  }
+  else
+  {
+      <p>Same as above, not really usefull converting to webP</p>
+  }
 </div>

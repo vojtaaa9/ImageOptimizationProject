@@ -14,7 +14,7 @@ namespace ImageOptimization
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            _handlerId = Log.SetLogHandler("VIPS", NetVips.Enums.LogLevelFlags.All, (domain, level, message) =>
+            _handlerId = Log.SetLogHandler("VIPS", NetVips.Enums.LogLevelFlags.LevelMask, (domain, level, message) =>
             {
                 Debug.WriteLine("Domain: '{0}' Level: {1}", domain, level);
                 Debug.WriteLine("Message: {0}", message);
