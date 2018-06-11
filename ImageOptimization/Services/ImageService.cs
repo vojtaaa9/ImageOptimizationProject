@@ -51,7 +51,7 @@ namespace ImageOptimization.Services
         /// <param name="width">Width of the image</param>
         /// <param name="height">Optional Height of the image</param>
         /// <returns>Empty ThumbImage if no file exists or Created ThumbImage</returns>
-        internal static ThumbImage GenerateThumbnail(ThumbImage src, int width, int? height = null)
+        internal static ThumbImage GenerateThumbnail(ThumbImage src, int width, int? height = null, int q = 100)
         {
             // Checks, if the file exists
             if (src == null && File.Exists(src.AbsolutePath))
@@ -66,7 +66,12 @@ namespace ImageOptimization.Services
             // Create corresponding file
             try
             {
-                thumbnail.WriteToFile(filePath);
+                // Interlace JPEG's
+                var jpeg = new VOption {
+                    { "interlace", true}
+                };
+
+                thumbnail.WriteToFile(filePath, src.Format == Format.JPEG ? jpeg : null);
             }
             catch (Exception e)
             {
@@ -83,13 +88,15 @@ namespace ImageOptimization.Services
                 Height = thumbnail.Height,
                 Width = thumbnail.Width,
                 SourceImageID = src.ID,
-                Format = FileService.ParseFileFormat(Path.GetExtension(filePath))
+                Format = FileService.ParseFileFormat(Path.GetExtension(filePath)),
+                FileSize = new FileInfo(filePath).Length,
+                Quality = q
             };
 
             return thumb;
         }
 
-        public static ThumbImage ConvertToFormat(SourceImage sourceImage, Format format, bool strip = false)
+        public static ThumbImage ConvertToFormat(SourceImage sourceImage, Format format, bool strip = false, int q = 100)
         {
             // Checks, if the file exists or convert isn't necessary
             if (sourceImage == null || (sourceImage == null && File.Exists(sourceImage.AbsolutePath)))
@@ -109,17 +116,21 @@ namespace ImageOptimization.Services
             switch (format)
             {
                 case Format.JPEG:
-                    image.Jpegsave(filePath, null, 100, null, false, true, true, null, null, false, null, strip);
+                    image.Jpegsave(filePath, null, q, null, true, true, false, true, null, true, null, strip);
                     break;
                 case Format.GIF:
                     // TODO: Houston, we've got a problem! Vips cant handle GIFs
-                    //image.Magicksave(filePath, "gif", 100);
+                    //image.Magicksave(filePath, "gif", q);
                     break;
                 case Format.PNG:
-                    image.Pngsave(filePath, 0, false, strip: strip);
+                    // Compression ratio is inverce of quality
+                    int pngQ = q - 100;
+                    pngQ = (pngQ < 0) ? 0 : pngQ;
+
+                    image.Pngsave(filePath, pngQ, false, strip: strip);
                     break;
                 case Format.WebP:
-                    image.Webpsave(filePath, null, 100, true, nearLossless: true, strip: strip);
+                    image.Webpsave(filePath, null, q, true, nearLossless: true, strip: strip);
                     break;
                 case Format.TIFF:
                     image.Tiffsave(filePath, strip: strip);
@@ -136,7 +147,9 @@ namespace ImageOptimization.Services
                 Height = image.Height,
                 Width = image.Width,
                 SourceImageID = sourceImage.ID,
-                Format = format
+                Format = format,
+                FileSize = new FileInfo(filePath).Length,
+                Quality = q
             };
 
             return thumb;

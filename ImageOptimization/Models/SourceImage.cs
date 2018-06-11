@@ -57,20 +57,21 @@ namespace ImageOptimization.Models
             return thumbnail;
         }
 
-        internal ThumbImage GetThumbnailInFormat(Format format, int width, int height = 0)
+        internal ThumbImage GetThumbnailInFormat(Format format, int width, int height = 0, bool strip = false, int q = 100)
         {
-            // If no format change is requested
-            if (this.Format == format)
+            // If no format change is requested or is SVG
+            if (Format == format || format == Format.SVG || Format == Format.SVG)
                 return GetThumbnail(width, height);
 
-            // If Thumbnail list is not initialized, return null
+            // If Thumbnail list is not initialized, return empty thumbnail
             if (Thumbnails == null)
                 return new ThumbImage();
 
-            // Get first thumbnail that matches dimensions is chosen format
+            // Get first thumbnail that matches dimensions, format and quality
             var thumbnail = Thumbnails.Find(
                 w => w.Format == format
                 && (w.Width == width || w.Height == height)
+                && (w.Quality == q)
                 );
 
             // If any thumbnail is found, return it
@@ -78,12 +79,12 @@ namespace ImageOptimization.Models
                 return thumbnail;
 
             // no thumbnail exists, let vips generate a new one
-            var converted = ImageService.ConvertToFormat(this, format);
-            thumbnail = ImageService.GenerateThumbnail(converted, width);
+            var converted = ImageService.ConvertToFormat(this, format, strip, q);
+            thumbnail = ImageService.GenerateThumbnail(converted, width, q: q);
+            
             Thumbnails.Add(thumbnail);
 
             return thumbnail;
-
         }
 
         internal ThumbImage GetImageInFormat(Format format)

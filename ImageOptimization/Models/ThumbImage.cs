@@ -19,5 +19,14 @@ namespace ImageOptimization.Models
         public int Width { get; set; }
         public int Height { get; set; }
         public Format Format { get; set; }
+        public long FileSize { get; set; }
+        public int Quality { get; set; }
+
+        public String getFileSize()
+        {
+            return (((float) FileSize) / 1024).ToString("0.00") + " kB";
+        }
     }
+
+    
 }
