@@ -1,5 +1,5 @@
 ﻿using NetVips;
-using System;
+using System.Diagnostics;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -14,10 +14,10 @@ namespace ImageOptimization
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            _handlerId = Log.SetLogHandler("VIPS", NetVips.Enums.LogLevelFlags.Critical, (domain, level, message) =>
+            _handlerId = Log.SetLogHandler("VIPS", NetVips.Enums.LogLevelFlags.All, (domain, level, message) =>
             {
-                Console.WriteLine("Domain: '{0}' Level: {1}", domain, level);
-                Console.WriteLine("Message: {0}", message);
+                Debug.WriteLine("Domain: '{0}' Level: {1}", domain, level);
+                Debug.WriteLine("Message: {0}", message);
             });
         }
     }
