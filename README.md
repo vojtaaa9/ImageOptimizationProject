@@ -10,7 +10,7 @@ This repository contains all sources to sample web application, where different 
 
 ## Image Dataset
 
-Images should be stored in `ImageOptimization/images` :(. Unfortunately, I can't give you the images, since I do not own them. But you can go ahead do the tests with some public image datasets.
+Images should be stored in `ImageOptimization/images` :(. Unfortunately, I can't give you the images, since I do not own them. But you can go ahead do the tests with some public image datasets. Please be aware, that lots of the images online are already somehow compressed or optimized, which makes it difficult to show real impact. More about it on https://kornel.ski/en/faircomparison.
 
 
 ## How to get up and running: 

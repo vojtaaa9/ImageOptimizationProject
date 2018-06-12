@@ -40,7 +40,7 @@ namespace ImageOptimization.Controllers
             // Load 30 SourceImages according to current page
             List<SourceImage> sourceImages = db.SourceImages
                 .Include(i => i.Thumbnails)
-                .OrderBy(i => i.FileName)
+                .OrderBy(i => i.ID)
                 .Skip(page * count)
                 .Take(count)
                 .ToList();

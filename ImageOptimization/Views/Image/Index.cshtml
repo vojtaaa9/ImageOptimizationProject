@@ -18,8 +18,8 @@
   @if (Model.ImageItems.Any())
   {
     <p>
-      <a class="right" href="@Url.Action("Index","Image", new {Page = Model.Page+1})">Next</a>
-      <a href="@Url.Action("Index","Image", new {Page = Model.Page-1})">Before</a>
+      <a class="right" href="@Url.Action("Index","Image", new {page = Model.Page+1})">Next</a>
+      <a href="@Url.Action("Index","Image", new {page = Model.Page-1})">Before</a>
     </p>
     <table class="table">
       <tr>
@@ -46,7 +46,7 @@
         <tr>
           <td>
             <a href="@Url.Action("Details", "Image", new { id = item.SourceImageID })">
-              <img class="img img-overview" src="@item.RelativePath" alt="@item.AltText" width="@item.Width" height="@item.Height" />
+              <img class="img img-overview" id="@item.SourceImageID" src="@item.RelativePath" alt="@item.AltText" width="@item.Width" height="@item.Height" />
             </a>
           </td>
           @*<td>
@@ -70,13 +70,13 @@
 
     </table>
     <p>
-      <a class="right" href="@Url.Action("Index","Image", new {Page = Model.Page+1})">Next</a>
-      <a href="@Url.Action("Index","Image", new {Page = Model.Page-1})">Before</a>
+      <a class="right" href="@Url.Action("Index","Image", new {page = Model.Page+1})">Next</a>
+      <a href="@Url.Action("Index","Image", new {page = Model.Page-1})">Before</a>
     </p>
   }
   else
   {
-    <p>There is no data in the database or you are on page with no data! Did you forgot to load up the Images? For more information refer to <kbd>README</kbd></p>
-    <p> <a href="@Url.Action("Index","Image", new {Page = Model.Page})">Home</a></p>
+    <p id="no-data">There is no data in the database or you are on page with no data! Did you forgot to load up the Images? For more information refer to <kbd>README</kbd></p>
+    <p> <a href="@Url.Action("Index","Image", new {page = Model.Page})">Home</a></p>
   }
 </div>
