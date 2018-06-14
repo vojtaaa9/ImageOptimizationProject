@@ -30,11 +30,15 @@ namespace ImageOptimization.Migrations
 
                 var image = new SourceImage()
                 {
+                    ID = i+1,
                     AbsolutePath = path,
                     FileName = Path.GetFileName(path),
                     RelativePath = "/images/" + Path.GetFileName(path),
                     AltText = Path.GetFileNameWithoutExtension(path),
                     Thumbnails = new List<ThumbImage>(),
+                    Formats = new List<ThumbImage>(),
+                    Metadata= new List<ThumbImage>(),
+                    Compression = new List<ThumbImage>(),
                     Format = FileService.ParseFileFormat(Path.GetExtension(path)),
                     FileSize = new FileInfo(path).Length
                 };
@@ -47,11 +51,12 @@ namespace ImageOptimization.Migrations
                     {
                         FileName = Path.GetFileName(minPath),
                         AltText = image.AltText,
-                        SourceImageID = image.ID,
+                        SourceID = image.ID,
                         RelativePath = "/images/out/" + Path.GetFileName(minPath),
                         AbsolutePath = minPath,
                         Format = Format.SVG,
-                        FileSize = new FileInfo(minPath).Length
+                        FileSize = new FileInfo(minPath).Length,
+                        Stripped = false
                     };
 
                     image.Thumbnails.Add(optimized);

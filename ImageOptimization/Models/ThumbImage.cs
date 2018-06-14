@@ -7,7 +7,7 @@ namespace ImageOptimization.Models
     public class ThumbImage
     {
         public int ID { get; set; }
-        public int SourceImageID { get; set; }
+        public int SourceID { get; set; }
         [Required]
         public String AbsolutePath { get; set; }
         [Required]
@@ -21,6 +21,7 @@ namespace ImageOptimization.Models
         public Format Format { get; set; }
         public long FileSize { get; set; }
         public int Quality { get; set; }
+        public bool Stripped { get; set; }
 
         /// <summary>
         /// Get's File Size in human readable format (kB)

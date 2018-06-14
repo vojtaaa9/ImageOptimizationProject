@@ -45,8 +45,8 @@
       {
         <tr>
           <td>
-            <a href="@Url.Action("Details", "Image", new { id = item.SourceImageID })">
-              <img class="img img-overview" id="@item.SourceImageID" src="@item.RelativePath" alt="@item.AltText" width="@item.Width" height="@item.Height" />
+            <a href="@Url.Action("Details", "Image", new { id = item.SourceID })">
+              <img class="img img-overview" id="@item.SourceID" src="@item.RelativePath" alt="@item.AltText" width="@item.Width" height="@item.Height" />
             </a>
           </td>
           @*<td>
@@ -62,8 +62,8 @@
             @Html.DisplayFor(modelItem => item.AltText)
           </td>
           <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.SourceImageID }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.SourceImageID })
+            @Html.ActionLink("Edit", "Edit", new { id = item.SourceID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.SourceID })
           </td>
         </tr>
       }

@@ -50,15 +50,22 @@ namespace ImageOptimization.Controllers
 
             foreach (var sourceImage in sourceImages)
             {
-                ThumbImage thumbnail = sourceImage.GetThumbnailInFormat(Format.JPEG, 200, q: 75);
+                ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, 200, q: 75);
 
                 if (!db.ThumbImages.AsEnumerable().Contains(thumbnail))
                 {
                     // Save new thumbnail to db
                     db.ThumbImages.Add(thumbnail);
+                    
                     db.Entry(sourceImage).State = EntityState.Modified;
-                    db.SaveChanges();
                 }
+
+                if(!sourceImage.Thumbnails.AsEnumerable().Contains(thumbnail))
+                {
+                    sourceImage.Thumbnails.Add(thumbnail);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                }
+                db.SaveChanges();
 
                 // Add it to colletion of thumbnails
                 thumbnails.Add(thumbnail);
@@ -95,22 +102,98 @@ namespace ImageOptimization.Controllers
 
             VipsImage.Dispose();
 
+            List<ThumbImage> thumbs = new List<ThumbImage>();
+
             // Generate set of 8 thumbnails
             foreach (int size in sizes)
             {
-                ThumbImage thumbnail = sourceImage.GetThumbnailInFormat(Format.JPEG, size, q: 75);
+                ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, size);
 
                 if (!db.ThumbImages.AsEnumerable().Contains(thumbnail))
                 {
                     // Save new thumbnail to db
                     db.ThumbImages.Add(thumbnail);
+                    
                     db.Entry(sourceImage).State = EntityState.Modified;
-                    db.SaveChanges();
+                }
+
+                if (!sourceImage.Thumbnails.AsEnumerable().Contains(thumbnail))
+                {
+                    sourceImage.Thumbnails.Add(thumbnail);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                }
+
+                thumbs.Add(thumbnail);
+            }
+
+
+            // Generate format images
+            Format[] formats = new Format[] { Format.GIF, Format.JPEG, Format.PNG, Format.WebP};
+
+            foreach(Format format in formats)
+            {
+                ThumbImage formatImage = sourceImage.GetImage(format, sourceImage.Width);
+
+                if (!db.ThumbImages.AsEnumerable().Contains(formatImage))
+                {
+                    // Save new thumbnail to db
+                    db.ThumbImages.Add(formatImage);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                }
+
+                if(!sourceImage.Formats.AsEnumerable().Contains(formatImage))
+                {
+                    sourceImage.Formats.Add(formatImage);
+                    db.Entry(sourceImage).State = EntityState.Modified;
                 }
             }
 
+
+            // Generate compression images
+            foreach (Format format in formats)
+            {
+                ThumbImage compressImage = sourceImage.GetImage(format, sourceImage.Width, q: 75);
+
+                if (!db.ThumbImages.AsEnumerable().Contains(compressImage))
+                {
+                    // Save new thumbnail to db
+                    db.ThumbImages.Add(compressImage);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                }
+
+                if (!sourceImage.Compression.AsEnumerable().Contains(compressImage))
+                {
+                    sourceImage.Compression.Add(compressImage);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                }
+            }
+
+            // Generate stripped images (remove metadata)
+            foreach (Format format in formats)
+            {
+                ThumbImage strippedImage = sourceImage.GetImage(format, sourceImage.Width, strip: true);
+
+                if (!db.ThumbImages.AsEnumerable().Contains(strippedImage))
+                {
+                    // Save new thumbnail to db
+                    db.ThumbImages.Add(strippedImage);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                }
+
+                if (!sourceImage.Metadata.AsEnumerable().Contains(strippedImage))
+                {
+                    sourceImage.Metadata.Add(strippedImage);
+                    db.Entry(sourceImage).State = EntityState.Modified;
+                }
+            }
+
+            // Save Changes if any
+            if (db.Entry(sourceImage).State == EntityState.Modified)
+                db.SaveChanges();
+
+
             // Create ViewModel
-            SourceImageViewModel sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage);
+            SourceImageViewModel sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage, thumbs);
 
             return View("Details", sourceImageViewModel);
         }
@@ -129,7 +212,7 @@ namespace ImageOptimization.Controllers
             }
 
             // Convert the Image
-            ThumbImage image = ImageService.ConvertToFormat(sourceImage, format, strip, quality);
+            ThumbImage image = ImageService.CreateImage(sourceImage, sourceImage.Width, format: format, strip: strip, q: quality);
 
             // Return the file back
             return base.File(image.RelativePath, "image/"+format.ToString().ToLower());

@@ -36,3 +36,22 @@ body {
 table {
   width: 100%;
 }
+
+.overflow-container {
+  overflow: scroll;
+  max-width: 45em;
+  max-height: 25em;
+}
+
+.overflow-container img {
+
+}
+
+.list li {
+  margin-bottom: 0.5em;
+}
+
+.margin-bottom-10em {
+  margin-bottom: 10em;
+  border: none;
+}

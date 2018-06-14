@@ -16,5 +16,8 @@ namespace ImageOptimization.ViewModels
         public String Sizes { get; set; }
         public String FileSize { get; set; }
         public List<ThumbImage> Thumbnails { get; set; }
+        public List<ThumbImage> Formats { get; set; }
+        public List<ThumbImage> Compression { get; set; }
+        public List<ThumbImage> Metadata { get; set; }
     }
 }

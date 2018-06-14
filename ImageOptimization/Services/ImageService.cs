@@ -8,12 +8,19 @@ using ImageOptimization.ViewModels;
 using ImageOptimization.Enums;
 using NetVips;
 using ImageMagick;
+using System.Collections.Generic;
 
 namespace ImageOptimization.Services
 {
     public class ImageService
     {
-        public static SourceImageViewModel GetSourceImageViewModel(SourceImage sourceImage, int width = 0, int height = 0)
+
+        /// <summary>
+        /// Create SourceImageViewModel for Detail View
+        /// </summary>
+        /// <param name="sourceImage">sourceImage</param>
+        /// <returns>SourceImageViewModel with all data ready to be displayed</returns>
+        public static SourceImageViewModel GetSourceImageViewModel(SourceImage sourceImage, List<ThumbImage> thumbs)
         {
             if (sourceImage == null)
                 return null;
@@ -21,7 +28,7 @@ namespace ImageOptimization.Services
             // Build sizes component
             StringBuilder sizes = new StringBuilder();
 
-            foreach(ThumbImage thumb in sourceImage.Thumbnails)
+            foreach(ThumbImage thumb in thumbs)
             {
                 sizes.Append(thumb.RelativePath);
                 sizes.Append(" ");
@@ -38,8 +45,11 @@ namespace ImageOptimization.Services
                 Width = sourceImage.Width.ToString(),
                 Height = sourceImage.Height.ToString(),
                 FileFormat = sourceImage.Format.ToString(),
-                Thumbnails = sourceImage.Thumbnails,
-                Sizes = sizes.ToString(),
+                Thumbnails = thumbs,
+                Formats = sourceImage.Formats,
+                Metadata = sourceImage.Metadata,
+                Compression = sourceImage.Compression,
+                Sizes = sourceImage.Format == Format.SVG ? "" : sizes.ToString(),
                 FileSize = $"{sourceImage.getFileSize()}, ({sourceImage.FileSize} Bytes)"
             };
         }
@@ -52,78 +62,38 @@ namespace ImageOptimization.Services
         /// <param name="width">Width of the image</param>
         /// <param name="height">Optional Height of the image</param>
         /// <returns>Empty ThumbImage if no file exists or Created ThumbImage</returns>
-        internal static ThumbImage GenerateThumbnail(SourceImage src, int width, int? height = null, int q = 100, Format format = Format.JPEG)
+        internal static ThumbImage CreateImage(SourceImage src, int width, int? height = null, int q = 100, Format format = Format.JPEG, bool strip = false)
         {
-            // Checks, if the file exists
+            // Checks, if the source file exists
             if (src == null && File.Exists(src.AbsolutePath))
                 return new ThumbImage();
 
-            // Create Thumbnail using vips
-            Image thumbnail = Image.Thumbnail(src.AbsolutePath, width, height, "down", true);
-
-            string fileName = GenerateThumbnailFilename(thumbnail.Width, thumbnail.Height, Path.GetFileNameWithoutExtension(src.FileName), format);
-            String filePath = FileService.CombineDirectoryAndFilename(GetThumbnailPath(), $"{fileName}");
-
-            // Create corresponding file
-            try
-            {
-                // Interlace JPEG's
-                var jpeg = new VOption {
-                    { "interlace", true}
-                };
-
-                thumbnail.WriteToFile(filePath, format == Format.JPEG ? jpeg : null);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
-            }
-
-            var thumb = new ThumbImage()
-            {
-                AbsolutePath = filePath,
-                AltText = src.AltText,
-                FileName = fileName,
-                RelativePath = $"/thumbnails/{fileName}",
-                Height = thumbnail.Height,
-                Width = thumbnail.Width,
-                SourceImageID = src.ID,
-                Format = FileService.ParseFileFormat(Path.GetExtension(filePath)),
-                FileSize = new FileInfo(filePath).Length,
-                Quality = q
-            };
-
-            return thumb;
-        }
-
-        public static ThumbImage ConvertToFormat(SourceImage sourceImage, Format format, bool strip = false, int q = 100)
-        {
-            // Checks, if the file exists or convert isn't necessary
-            if (sourceImage == null || (sourceImage == null && File.Exists(sourceImage.AbsolutePath)))
+            // No uknown formats shall pass!
+            if (src.Format == Format.Unknown || format == Format.Unknown)
                 return new ThumbImage();
 
-            // No uknown formats shall pass!
-            if (sourceImage.Format == Format.Unknown || format == Format.Unknown)
-                return null;
-
-            // Create File
-            String fileName = GenerateThumbnailFilename(sourceImage.Width, sourceImage.Height, sourceImage.AltText, format);
-            String filePath = FileService.CombineDirectoryAndFilename(GetThumbnailPath(), fileName);
-
             // Load Image to Vips
-            Image image = Image.NewFromFile(sourceImage.AbsolutePath);
+            Image image = Image.Thumbnail(src.AbsolutePath, width, height, "down", true);
+            image = image.Copy();
+            int h = image.Height;
+            int w = image.Width;
+
+            // Create FileName and Path
+            String fileName = CreateThumbFilename(src, w, h, q, format.ToString().ToLower());
+            String filePath = FileService.CombineDirectoryAndFilename(GetThumbnailPath(), fileName);
 
             switch (format)
             {
                 case Format.JPEG:
-                    image.Jpegsave(filePath, null, q, null, true, true, false, true, null, true, null, strip);
+                    image.Jpegsave(filePath, null, q, null, true, true, false, true, null, true, null, strip, new double[] { 255.0, 255.0, 255.0 });
                     break;
                 case Format.GIF:
-                    using (MagickImage imImage = new MagickImage(sourceImage.AbsolutePath))
+                    using (MagickImage imImage = new MagickImage(src.AbsolutePath))
                     {
+                        imImage.Resize(w, h);
                         imImage.Quality = q;
-                        if(strip)
+                                                
+                        if (strip)
                             imImage.Strip();
                         imImage.Write(filePath);
                     }
@@ -143,29 +113,53 @@ namespace ImageOptimization.Services
                 case Format.TIFF:
                     image.Tiffsave(filePath, strip: strip);
                     break;
+                case Format.SVG:
+                    return src.GetOptimizedSVG();
             }
 
             // Create new ThumbImage Model
             var thumb = new ThumbImage()
             {
                 AbsolutePath = filePath,
-                AltText = sourceImage.AltText,
+                AltText = src.AltText,
                 FileName = fileName,
                 RelativePath = $"/thumbnails/{fileName}",
-                Height = image.Height,
-                Width = image.Width,
-                SourceImageID = sourceImage.ID,
+                Height = h,
+                Width = w,
+                SourceID = src.ID,
                 Format = format,
                 FileSize = new FileInfo(filePath).Length,
-                Quality = q
+                Quality = q,
+                Stripped = strip
             };
 
             return thumb;
         }
 
-        private static String GenerateThumbnailFilename(int width, int height, String srcFileName, Format format)
+        /// <summary>
+        /// Creates thubnail file name base on dupplied params
+        /// </summary>
+        /// <param name="q"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        private static String CreateThumbFilename(SourceImage src,int w, int h, int q, String format)
         {
-            return $"th_{width}x{height}_{srcFileName}.{format.ToString().ToLower()}";
+            int opt = 1;
+
+            // Check for existing files
+            while(File.Exists($"{GetThumbnailPath()}/th_{w}x{h}_{q}_{src.AltText}{opt}.{format}"))
+            {
+                opt++;
+            }
+
+            // Extension string
+            string ext = "";
+
+            // In case that that is existing file, make appendix
+            if (1 != opt)
+                ext = opt.ToString();
+
+            return $"th_{w}x{h}_{q}_{src.AltText}{opt}.{format}";
         }
 
         private static String GetThumbnailPath()

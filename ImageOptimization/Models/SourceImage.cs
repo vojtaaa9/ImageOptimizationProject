@@ -23,6 +23,9 @@ namespace ImageOptimization.Models
         public long FileSize { get; set; }
 
         public virtual List<ThumbImage> Thumbnails { get; set; }
+        public virtual List<ThumbImage> Formats { get; set; }
+        public virtual List<ThumbImage> Compression { get; set; }
+        public virtual List<ThumbImage> Metadata { get; set; }
 
         /// <summary>
         /// Get's File Size in human readable format (kB)
@@ -33,106 +36,66 @@ namespace ImageOptimization.Models
             return (((float)FileSize) / 1024).ToString("0.00") + " kB";
         }
 
+
         /// <summary>
-        /// Get's Thumbnail Model for specified width or height. SVG Files returns themselves in form of ThumbImage Model
+        /// Return Image in specified params. For SVG return optimized SVG File. Always
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns>ThumbnailImage Model</returns>
-        private ThumbImage GetThumbnail(int width, int height = 0, int quality = 100)
+        /// <param name="format">Format of the Image</param>
+        /// <param name="width">Desired width</param>
+        /// <param name="height">Desired height</param>
+        /// <param name="q">Quality of the image</param>
+        /// <param name="strip">True to strip all metadata</param>
+        /// <returns></returns>
+        internal ThumbImage GetImage(Format format, int width, int height = 0, int q = 100, bool strip = false)
         {
-            // SVG Format doesnt need any thumbnail
+            // If Format is SVG, return optimized SVG. 
             if (Format == Format.SVG)
-                return GetThumbImage();
+                return GetOptimizedSVG();
 
-            // If Thumbnail list is not initialized, return null
-            if (Thumbnails == null)
-                return new ThumbImage();
-
-            // Get first thumbnail that matches dimensions is chosen format
-            var thumbnail = Thumbnails.Find(
-                w => w.Format == Format
-                && (w.Width == width || w.Height == height)
-                );
-
-            // If any thumbnail is found, return it
-            if (thumbnail != null)
-                return thumbnail;
-
-            // no thumbnail exists, let vips generate a new one
-            thumbnail = ImageService.GenerateThumbnail(this, width, q: quality);
-            Thumbnails.Add(thumbnail);
-
-            return thumbnail;
-        }
-
-        internal ThumbImage GetThumbnailInFormat(Format format, int width, int height = 0, bool strip = false, int q = 100)
-        {
-            // If no format change is requested, return basic thumbnail
-            if (Format == format)
-                return GetThumbnail(width, height, q);
-
-            // If SVG is requested
-            if (Format == Format.SVG)
-                return GetOptimizedSVG(this);
-
-
-            // If Thumbnail list is not initialized, return empty thumbnail
-            if (Thumbnails == null)
-                return new ThumbImage();
-
-            // Get first thumbnail that matches dimensions, format and quality
+            // Get first thumbnail that matches dimensions, format, quality and metadata settings
             var thumbnail = Thumbnails.Find(
                 w => w.Format == format
                 && (w.Width == width || w.Height == height)
                 && (w.Quality == q)
+                && (w.Stripped == strip)
                 );
 
             // If any thumbnail is found, return it
             if (thumbnail != null)
                 return thumbnail;
 
-            // no thumbnail exists, let vips generate a new one
-            thumbnail = ImageService.GenerateThumbnail(this, width, q: q, format: format);
-            
-            Thumbnails.Add(thumbnail);
+            // no thumbnail exists, let vips/magick.NET generate a new one
+            thumbnail = ImageService.CreateImage(this, width, height, q, format, strip);
 
             return thumbnail;
         }
 
-        private ThumbImage GetOptimizedSVG(SourceImage sourceImage)
+
+        /// <summary>
+        /// Get's optimized SVG File
+        /// </summary>
+        /// <param name="sourceImage"></param>
+        /// <returns></returns>
+        internal ThumbImage GetOptimizedSVG()
         {
-            return sourceImage.Thumbnails.Find(i => i.SourceImageID == sourceImage.ID);
+            return Thumbnails[0];
         }
 
-        internal ThumbImage GetImageInFormat(Format format)
-        {
-            // Get first thumbnail that matches dimensions is chosen format
-            var thumbnail = Thumbnails.Find(w => w.Format == format);
-
-            // If any thumbnail is found, return it
-            if (thumbnail != null)
-                return thumbnail;
-
-            // no thumbnail exists, let vips generate a new one
-            thumbnail = ImageService.ConvertToFormat(this, format);
-            Thumbnails.Add(thumbnail);
-
-            return thumbnail;
-        }
-
+        /// <summary>
+        /// Get's this SourceImage as ThumbImage
+        /// </summary>
+        /// <returns></returns>
         private ThumbImage GetThumbImage()
         {
             return new ThumbImage()
             {
-                ID = this.ID,
-                SourceImageID = this.ID,
-                FileName = this.FileName,
-                RelativePath = this.RelativePath,
-                AbsolutePath = this.AbsolutePath,
-                AltText = this.AltText,
-                Width = this.Width,
-                Height = this.Height
+                ID = ID,
+                FileName = FileName,
+                RelativePath = RelativePath,
+                AbsolutePath = AbsolutePath,
+                AltText = AltText,
+                Width = Width,
+                Height = Height
             };
         }
     }
