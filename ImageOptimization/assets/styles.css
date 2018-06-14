@@ -15,12 +15,13 @@ body {
 }
 
 .img {
-  width: 100%;
+  max-width: 100%;
   height: auto;
 }
 
 .img-overview {
   max-width: 16em;
+  width: 100%;
 }
 
 .img-detail {

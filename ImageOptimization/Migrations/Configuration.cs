@@ -22,6 +22,7 @@ namespace ImageOptimization.Migrations
             string[] fileEntries = FileService.GetAllFilesInDir(absoluteDir);
             
             SourceImage[] imageEntities = new SourceImage[fileEntries.Length];
+            ThumbImage[] thumbEntities = new ThumbImage[fileEntries.Length];
 
             int i = 0;
             foreach (string path in fileEntries)
@@ -38,12 +39,49 @@ namespace ImageOptimization.Migrations
                     FileSize = new FileInfo(path).Length
                 };
 
+                if (image.Format == Format.SVG)
+                {
+                    var minPath = absoluteDir + "/out/" + Path.GetFileNameWithoutExtension(path) + ".min.svg";
+
+                    var optimized = new ThumbImage()
+                    {
+                        FileName = Path.GetFileName(minPath),
+                        AltText = image.AltText,
+                        SourceImageID = image.ID,
+                        RelativePath = "/images/out/" + Path.GetFileName(minPath),
+                        AbsolutePath = minPath,
+                        Format = Format.SVG,
+                        FileSize = new FileInfo(minPath).Length
+                    };
+
+                    image.Thumbnails.Add(optimized);
+                    thumbEntities.SetValue(optimized, i);
+                    
+                }
+
                 imageEntities.SetValue(image, i);
                 i++;
             }
 
-            context.SourceImages.AddOrUpdate(imageEntities);
-            context.SaveChanges();
+            // Wrap everything in transaction
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.SourceImages.AddOrUpdate(imageEntities);
+                    context.ThumbImages.AddOrUpdate(thumbEntities);
+                    context.SaveChanges();
+
+                    transaction.Commit();
+
+                    Console.WriteLine("Seed succesfull.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message, e.InnerException);
+                    transaction.Rollback();
+                }
+            }
 
             // Create Directory for thumbnails
             Directory.CreateDirectory(MapPath("thumbnails"));

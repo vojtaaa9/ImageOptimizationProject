@@ -93,6 +93,8 @@ namespace ImageOptimization.Controllers
             sourceImage.Width = VipsImage.Width;
             sourceImage.Height = VipsImage.Height;
 
+            VipsImage.Dispose();
+
             // Generate set of 8 thumbnails
             foreach (int size in sizes)
             {

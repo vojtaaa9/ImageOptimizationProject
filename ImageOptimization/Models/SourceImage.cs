@@ -25,6 +25,15 @@ namespace ImageOptimization.Models
         public virtual List<ThumbImage> Thumbnails { get; set; }
 
         /// <summary>
+        /// Get's File Size in human readable format (kB)
+        /// </summary>
+        /// <returns>File Size with two decimals</returns>
+        public String getFileSize()
+        {
+            return (((float)FileSize) / 1024).ToString("0.00") + " kB";
+        }
+
+        /// <summary>
         /// Get's Thumbnail Model for specified width or height. SVG Files returns themselves in form of ThumbImage Model
         /// </summary>
         /// <param name="width"></param>
@@ -51,7 +60,7 @@ namespace ImageOptimization.Models
                 return thumbnail;
 
             // no thumbnail exists, let vips generate a new one
-            thumbnail = ImageService.GenerateThumbnail(GetThumbImage(), width, q: quality);
+            thumbnail = ImageService.GenerateThumbnail(this, width, q: quality);
             Thumbnails.Add(thumbnail);
 
             return thumbnail;
@@ -59,9 +68,14 @@ namespace ImageOptimization.Models
 
         internal ThumbImage GetThumbnailInFormat(Format format, int width, int height = 0, bool strip = false, int q = 100)
         {
-            // If no format change is requested or is SVG
-            if (Format == format || format == Format.SVG || Format == Format.SVG)
+            // If no format change is requested, return basic thumbnail
+            if (Format == format)
                 return GetThumbnail(width, height, q);
+
+            // If SVG is requested
+            if (Format == Format.SVG)
+                return GetOptimizedSVG(this);
+
 
             // If Thumbnail list is not initialized, return empty thumbnail
             if (Thumbnails == null)
@@ -79,12 +93,16 @@ namespace ImageOptimization.Models
                 return thumbnail;
 
             // no thumbnail exists, let vips generate a new one
-            var converted = ImageService.ConvertToFormat(this, format, strip, q);
-            thumbnail = ImageService.GenerateThumbnail(converted, width, q: q);
+            thumbnail = ImageService.GenerateThumbnail(this, width, q: q, format: format);
             
             Thumbnails.Add(thumbnail);
 
             return thumbnail;
+        }
+
+        private ThumbImage GetOptimizedSVG(SourceImage sourceImage)
+        {
+            return sourceImage.Thumbnails.Find(i => i.SourceImageID == sourceImage.ID);
         }
 
         internal ThumbImage GetImageInFormat(Format format)

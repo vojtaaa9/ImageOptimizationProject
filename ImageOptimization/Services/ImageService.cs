@@ -7,6 +7,7 @@ using ImageOptimization.Models;
 using ImageOptimization.ViewModels;
 using ImageOptimization.Enums;
 using NetVips;
+using ImageMagick;
 
 namespace ImageOptimization.Services
 {
@@ -39,7 +40,7 @@ namespace ImageOptimization.Services
                 FileFormat = sourceImage.Format.ToString(),
                 Thumbnails = sourceImage.Thumbnails,
                 Sizes = sizes.ToString(),
-                FileSize = $"{(sourceImage.FileSize/1024)} kB, ({sourceImage.FileSize})"
+                FileSize = $"{sourceImage.getFileSize()}, ({sourceImage.FileSize} Bytes)"
             };
         }
 
@@ -51,7 +52,7 @@ namespace ImageOptimization.Services
         /// <param name="width">Width of the image</param>
         /// <param name="height">Optional Height of the image</param>
         /// <returns>Empty ThumbImage if no file exists or Created ThumbImage</returns>
-        internal static ThumbImage GenerateThumbnail(ThumbImage src, int width, int? height = null, int q = 100)
+        internal static ThumbImage GenerateThumbnail(SourceImage src, int width, int? height = null, int q = 100, Format format = Format.JPEG)
         {
             // Checks, if the file exists
             if (src == null && File.Exists(src.AbsolutePath))
@@ -60,8 +61,8 @@ namespace ImageOptimization.Services
             // Create Thumbnail using vips
             Image thumbnail = Image.Thumbnail(src.AbsolutePath, width, height, "down", true);
 
-            string fileName = GenerateThumbnailFilename(thumbnail.Width, thumbnail.Height, src.FileName);
-            String filePath = FileService.CombineDirectoryAndFilename(GetThumbnailPath(), fileName);
+            string fileName = GenerateThumbnailFilename(thumbnail.Width, thumbnail.Height, Path.GetFileNameWithoutExtension(src.FileName), format);
+            String filePath = FileService.CombineDirectoryAndFilename(GetThumbnailPath(), $"{fileName}");
 
             // Create corresponding file
             try
@@ -71,7 +72,7 @@ namespace ImageOptimization.Services
                     { "interlace", true}
                 };
 
-                thumbnail.WriteToFile(filePath, src.Format == Format.JPEG ? jpeg : null);
+                thumbnail.WriteToFile(filePath, format == Format.JPEG ? jpeg : null);
             }
             catch (Exception e)
             {
@@ -107,7 +108,7 @@ namespace ImageOptimization.Services
                 return null;
 
             // Create File
-            String fileName = GenerateThumbnailFilename(sourceImage.Width, sourceImage.Height, sourceImage.AltText) + "." + format.ToString().ToLower();
+            String fileName = GenerateThumbnailFilename(sourceImage.Width, sourceImage.Height, sourceImage.AltText, format);
             String filePath = FileService.CombineDirectoryAndFilename(GetThumbnailPath(), fileName);
 
             // Load Image to Vips
@@ -119,18 +120,25 @@ namespace ImageOptimization.Services
                     image.Jpegsave(filePath, null, q, null, true, true, false, true, null, true, null, strip);
                     break;
                 case Format.GIF:
-                    // TODO: Houston, we've got a problem! Vips cant handle GIFs
-                    //image.Magicksave(filePath, "gif", q);
+                    using (MagickImage imImage = new MagickImage(sourceImage.AbsolutePath))
+                    {
+                        imImage.Quality = q;
+                        if(strip)
+                            imImage.Strip();
+                        imImage.Write(filePath);
+                    }
                     break;
                 case Format.PNG:
-                    // Compression ratio is inverce of quality
-                    int pngQ = q - 100;
-                    pngQ = (pngQ < 0) ? 0 : pngQ;
+                    // Compression ratio is inverse of quality
+                    int pngQ = (q - 100) * -1;
 
                     image.Pngsave(filePath, pngQ, false, strip: strip);
                     break;
                 case Format.WebP:
-                    image.Webpsave(filePath, null, q, true, nearLossless: true, strip: strip);
+                    if (q == 100)
+                        image.Webpsave(filePath, null, q, true, nearLossless: true, strip: strip);
+                    else
+                        image.Webpsave(filePath, null, q, false, smartSubsample: true, strip: strip);
                     break;
                 case Format.TIFF:
                     image.Tiffsave(filePath, strip: strip);
@@ -155,9 +163,9 @@ namespace ImageOptimization.Services
             return thumb;
         }
 
-        private static String GenerateThumbnailFilename(int width, int height, String srcFileName)
+        private static String GenerateThumbnailFilename(int width, int height, String srcFileName, Format format)
         {
-            return $"th_{width}x{height}_{srcFileName}";
+            return $"th_{width}x{height}_{srcFileName}.{format.ToString().ToLower()}";
         }
 
         private static String GetThumbnailPath()
