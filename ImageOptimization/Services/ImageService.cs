@@ -74,7 +74,7 @@ namespace ImageOptimization.Services
 
             // Load Image to Vips
             Image image = Image.Thumbnail(src.AbsolutePath, width, height, "down", true);
-            image = image.Copy();
+            //image = image.Copy();
             int h = image.Height;
             int w = image.Width;
 
