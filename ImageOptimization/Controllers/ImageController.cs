@@ -28,7 +28,7 @@ namespace ImageOptimization.Controllers
             int total = db.SourceImages.Count();
 
             // If page is higher than total pages count
-            if (page > (total - count) / count)
+            if (page > total / count)
                 page = -1;
 
             if (page == -1)
