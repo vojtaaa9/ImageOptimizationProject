@@ -31,6 +31,11 @@ namespace ImageOptimization.Models
         {
             return (((float) FileSize) / 1024).ToString("0.00") + " kB";
         }
+
+        public String getFormat()
+        {
+            return Format.ToString();
+        }
     }
 
     

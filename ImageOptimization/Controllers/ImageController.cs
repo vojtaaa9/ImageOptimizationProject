@@ -155,10 +155,12 @@ namespace ImageOptimization.Controllers
             }
 
             // Convert the Image
-            ThumbImage image = ImageService.CreateImage(sourceImage, sourceImage.Width, format: format, strip: strip, q: quality);
+            ThumbImage image = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Thumbnails, q: quality, strip: strip);
+            SaveThumb(sourceImage, image, sourceImage.Thumbnails);
+            db.SaveChanges();
 
             // Return the file back
-            return base.File(image.RelativePath, "image/"+format.ToString().ToLower());
+            return File(image.RelativePath, "image/"+image.getFormat().ToLower());
         }
 
         // GET: Image/Create

@@ -8,6 +8,7 @@ This repository contains all sources to sample web application, where different 
 * Visual Studio 2017
 * libvips v8.6.3
 * [npm](https://www.npmjs.com/get-npm) and [svgo](https://github.com/svg/svgo) for minifying SVG's
+* [ImageMagick](http://www.imagemagick.org/script/index.php) for ssim Index and testing
 
 
 ## Image Dataset
@@ -49,6 +50,19 @@ All thumbnail images will be saved in `ImageOptimization/thumbnails` folder. The
 `"th_{w}x{h}_{q}_{src_name}{opt}.{format}"`. `w` refers to width of the thumbnail, `h` to height, `q` to Quality settings, `src_name` to the name of the source image, `opt` is optinal number, in case the file already exists on the file system and lastly `format` is the format ending.
 
 For example: source image with name **lizard.tif** will have this thumbnail generated and saved: `th_200x130_100_lizard.jpeg`
+
+```
+> magick compare -verbose -metric SSIM birthday.png birthday-768.png NULL:
+birthday.png PNG 1024x768 1024x768+0+0 8-bit sRGB 346856B 0.016u 0:00.021
+birthday-768.png PNG 768x576 768x576+0+0 8-bit sRGB 307858B 0.016u 0:00.016
+Image: birthday.png
+Offset: 0,0
+  Channel distortion: SSIM
+    red: 0.509967
+    green: 0.446983
+    blue: 0.375166
+    all: 0.444038
+```
 
 ## Troubleshooting
 

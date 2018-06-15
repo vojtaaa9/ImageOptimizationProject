@@ -11,10 +11,10 @@
   <hr />
 
   <ul>
-    <li><b>Format:</b> @Model.FileFormat</li>
-    <li><b>Width:</b> @Model.Width</li>
-    <li><b>Height:</b> @Model.Height</li>
-    <li><b>File size:</b> @Model.FileSize</li>
+    <li><b>Format:</b> <span data-id="@Model.ID">@Model.FileFormat</span> </li>
+    <li><b>Width:</b> <span data-id="@Model.ID">@Model.Width </span></li>
+    <li><b>Height:</b> <span data-id="@Model.ID">@Model.Height </span></li>
+    <li><b>File size:</b> <span data-id="@Model.ID">@Model.FileSize </span></li>
   </ul>
 
   <p>
@@ -95,8 +95,8 @@
   else
   {
       <p>
-        <b>File name:</b> @Model.Thumbnails.First().FileName <br />
-        <b>File size:</b> @Model.Thumbnails.First().getFileSize() <br />
+        <b>File name:</b> <span data-id="@Model.ID"> @Model.Thumbnails.First().FileName </span><br />
+        <b>File size:</b> <span data-id="@Model.ID">@Model.Thumbnails.First().getFileSize() </span><br />
         <img class="img" alt="@Model.AltText" src="@Model.Thumbnails.First().RelativePath" />
       </p>
   }
