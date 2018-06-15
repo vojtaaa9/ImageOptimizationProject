@@ -50,21 +50,9 @@ namespace ImageOptimization.Controllers
 
             foreach (var sourceImage in sourceImages)
             {
-                ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, 200, q: 75);
+                ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, 200, sourceImage.Thumbnails, q: 75);
 
-                if (!db.ThumbImages.AsEnumerable().Contains(thumbnail))
-                {
-                    // Save new thumbnail to db
-                    db.ThumbImages.Add(thumbnail);
-                    
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
-
-                if(!sourceImage.Thumbnails.AsEnumerable().Contains(thumbnail))
-                {
-                    sourceImage.Thumbnails.Add(thumbnail);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
+                SaveThumb(sourceImage, thumbnail, sourceImage.Thumbnails);
                 db.SaveChanges();
 
                 // Add it to colletion of thumbnails
@@ -107,21 +95,9 @@ namespace ImageOptimization.Controllers
             // Generate set of 8 thumbnails
             foreach (int size in sizes)
             {
-                ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, size);
+                ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, size, sourceImage.Thumbnails);
 
-                if (!db.ThumbImages.AsEnumerable().Contains(thumbnail))
-                {
-                    // Save new thumbnail to db
-                    db.ThumbImages.Add(thumbnail);
-                    
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
-
-                if (!sourceImage.Thumbnails.AsEnumerable().Contains(thumbnail))
-                {
-                    sourceImage.Thumbnails.Add(thumbnail);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
+                SaveThumb(sourceImage, thumbnail, sourceImage.Thumbnails);
 
                 thumbs.Add(thumbnail);
             }
@@ -132,59 +108,26 @@ namespace ImageOptimization.Controllers
 
             foreach(Format format in formats)
             {
-                ThumbImage formatImage = sourceImage.GetImage(format, sourceImage.Width);
+                ThumbImage formatImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Formats);
 
-                if (!db.ThumbImages.AsEnumerable().Contains(formatImage))
-                {
-                    // Save new thumbnail to db
-                    db.ThumbImages.Add(formatImage);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
-
-                if(!sourceImage.Formats.AsEnumerable().Contains(formatImage))
-                {
-                    sourceImage.Formats.Add(formatImage);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
+                SaveThumb(sourceImage, formatImage, sourceImage.Formats);
             }
 
 
             // Generate compression images
             foreach (Format format in formats)
             {
-                ThumbImage compressImage = sourceImage.GetImage(format, sourceImage.Width, q: 75);
+                ThumbImage compressImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Compression, q: 75);
 
-                if (!db.ThumbImages.AsEnumerable().Contains(compressImage))
-                {
-                    // Save new thumbnail to db
-                    db.ThumbImages.Add(compressImage);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
-
-                if (!sourceImage.Compression.AsEnumerable().Contains(compressImage))
-                {
-                    sourceImage.Compression.Add(compressImage);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
+                SaveThumb(sourceImage, compressImage, sourceImage.Compression);
             }
 
             // Generate stripped images (remove metadata)
             foreach (Format format in formats)
             {
-                ThumbImage strippedImage = sourceImage.GetImage(format, sourceImage.Width, strip: true);
+                ThumbImage strippedImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Metadata, strip: true);
 
-                if (!db.ThumbImages.AsEnumerable().Contains(strippedImage))
-                {
-                    // Save new thumbnail to db
-                    db.ThumbImages.Add(strippedImage);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
-
-                if (!sourceImage.Metadata.AsEnumerable().Contains(strippedImage))
-                {
-                    sourceImage.Metadata.Add(strippedImage);
-                    db.Entry(sourceImage).State = EntityState.Modified;
-                }
+                SaveThumb(sourceImage, strippedImage, sourceImage.Metadata);
             }
 
             // Save Changes if any
@@ -316,6 +259,23 @@ namespace ImageOptimization.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private void SaveThumb(SourceImage sourceImage, ThumbImage thumbnail, List<ThumbImage> collection)
+        {
+            if (!db.ThumbImages.AsEnumerable().Contains(thumbnail))
+            {
+                // Save new thumbnail to db
+                db.ThumbImages.Add(thumbnail);
+
+                db.Entry(sourceImage).State = EntityState.Modified;
+            }
+
+            if (!collection.AsEnumerable().Contains(thumbnail))
+            {
+                collection.Add(thumbnail);
+                db.Entry(sourceImage).State = EntityState.Modified;
+            }
         }
     }
 }

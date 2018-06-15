@@ -4,23 +4,26 @@ This repository contains all sources to sample web application, where different 
 
 **Requirements:**
 
-* .NET Framework 4.7
+* .NET Framework 4.6
 * Visual Studio 2017
+* libvips v8.6.3
+* [npm](https://www.npmjs.com/get-npm) and [svgo](https://github.com/svg/svgo) for minifying SVG's
 
 
 ## Image Dataset
 
-Images should be stored in `ImageOptimization/images` :(. Unfortunately, I can't give you the images, since I do not own them. But you can go ahead do the tests with some public image datasets. Please be aware, that lots of the images online are already somehow compressed or optimized, which makes it difficult to show real impact. More about it on https://kornel.ski/en/faircomparison.
+Images should be stored in `ImageOptimization/images` :(. Unfortunately, I can't give you the images, since I do not own them. But you can go ahead do the tests with some public image datasets. Please be aware, that lots of the images online are already somehow compressed or optimized, which makes it difficult to show real impact. More about it on [kornelski website](https://kornel.ski/en/faircomparison).
 
 
 ## How to get up and running: 
 
 1. Download vips and install it.
-2. Get Image dataset and save it in `ImageOptimization/images`
-3. Build the Project
-4. `InitialCreate` the Database using Entity Framework 6 (this will also seed the database from images folder)
-5. Run it
-6. You should see
+1. Get raster image dataset and save it in `ImageOptimization/images`. **I strongly recommend normalizing the dataset** with `tiff-normalize.ps1` script. It will resize all images to max width of 2048 px, which is excellent for further testing.
+1. Get vector image dataset and use the Script `svgo-optimize.ps1` to generate minified SVG's. Then copy the folder (with SVG's and folder _out_ with minified SVG's)to `ImageOptimization/images`. Now you should have
+1. Build the Project
+1. `InitialCreate` the Database using Entity Framework 6 (this will also seed the database from images folder)
+1. Run it
+1. You should see nice message from the application, displaying the images (if you don't, look at troubleshooting section)
 
 
 ### Installing vips
@@ -37,12 +40,19 @@ In the Edit System Variable window, click the New button, which will add a line 
 
 Now libvips would have been installed successfully, **reopen Visual Studio** or the **Command prompt window** (to ensure that the environment is updated), and run your code that has references to NetVips.
 
-To make sure, it worked you can run: ``` vips.exe -v ```
+To make sure, it worked you can run: `vips.exe -v`
 
-If you see something like this: ```vips-8.6.3-Thu Mar  8 15:18:35 UTC 2018 ```, it works.
+If you see something like this: `vips-8.6.3-Thu Mar  8 15:18:35 UTC 2018`, it works.
+
+## Testing Images
+All thumbnail images will be saved in `ImageOptimization/thumbnails` folder. The names are generated automatically and will be in this format:
+`"th_{w}x{h}_{q}_{src_name}{opt}.{format}"`. `w` refers to width of the thumbnail, `h` to height, `q` to Quality settings, `src_name` to the name of the source image, `opt` is optinal number, in case the file already exists on the file system and lastly `format` is the format ending.
+
+For example: source image with name **lizard.tif** will have this thumbnail generated and saved: `th_200x130_100_lizard.jpeg`
 
 ## Troubleshooting
 
+**libvips:**
 Make sure `libvips` is installed correctly. If you have problems regarding assemblies and can't even start up the application, make sure, that you are building against `x64`. In Solution Explorer right-click Project > Properties > Select Web and at Server Section set Bitness to x64. This is because libvips can't run on 32 bit server.
 
-**Messed up the database?** Just run `Update-Database -TargetMigration:0 -force` from Package Manager Console. This will wipe all data and you will have fresh start. With `Update-Database` Entity Framework will generate all migrations and apply them to the database.
+**Database corupt?** Just run `Update-Database -TargetMigration:0 -force` from Package Manager Console. This will wipe all data and you will have fresh start. With `Update-Database` Entity Framework will run all migrations and apply them to the database.

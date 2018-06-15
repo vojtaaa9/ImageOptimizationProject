@@ -46,14 +46,14 @@ namespace ImageOptimization.Models
         /// <param name="q">Quality of the image</param>
         /// <param name="strip">True to strip all metadata</param>
         /// <returns></returns>
-        internal ThumbImage GetImage(Format format, int width, int height = 0, int q = 100, bool strip = false)
+        internal ThumbImage GetImage(Format format, int width, List<ThumbImage> list, int height = 0, int q = 100, bool strip = false)
         {
             // If Format is SVG, return optimized SVG. 
             if (Format == Format.SVG)
                 return GetOptimizedSVG();
 
             // Get first thumbnail that matches dimensions, format, quality and metadata settings
-            var thumbnail = Thumbnails.Find(
+            var thumbnail = list.Find(
                 w => w.Format == format
                 && (w.Width == width || w.Height == height)
                 && (w.Quality == q)
