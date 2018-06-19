@@ -14,7 +14,8 @@
     <li><b>Format:</b> <span data-id="@Model.ID">@Model.FileFormat</span> </li>
     <li><b>Width:</b> <span data-id="@Model.ID">@Model.Width </span></li>
     <li><b>Height:</b> <span data-id="@Model.ID">@Model.Height </span></li>
-    <li><b>File size:</b> <span data-id="@Model.ID">@Model.FileSize </span></li>
+    <li><b>File size:</b> @Model.HumanSize (<span data-id="@Model.ID">@Model.FileSize</span> Bytes)</li>
+    <li><b>Load time:</b> <span class="load-time" data-name="@Model.FileName"></span> ms</li>
   </ul>
 
   <p>
@@ -34,7 +35,8 @@
           <b>Name:</b> @thumbnail.FileName,<br />
           <b>Quality:</b> @thumbnail.Quality <br />
           <b>Dimensions:</b> @thumbnail.Width x @thumbnail.Height, <br />
-          <b>File size:</b> @thumbnail.getFileSize() (@thumbnail.FileSize Bytes) <br />
+          <b>File size:</b> @thumbnail.getFileSize() (<span data-id="@thumbnail.ID">@thumbnail.FileSize</span> Bytes) <br />
+          <b>Load time:</b> <span class="load-time" data-name="@thumbnail.FileName"></span> ms <br />
           <div class="overflow-container">
             <img src="@thumbnail.RelativePath" alt="@thumbnail.AltText">
           </div>
@@ -60,7 +62,8 @@
       <b>Name:</b> @format.FileName,<br />
       <b>Quality:</b> @format.Quality <br />
       <b>Dimensions:</b> @format.Width x @format.Height, <br />
-      <b>File size:</b> @format.getFileSize() (@format.FileSize Bytes) <br />
+      <b>File size:</b> @format.getFileSize() (<span data-id="@format.ID">@format.FileSize</span> Bytes) <br />
+      <b>Load time:</b> <span class="load-time" data-name="@format.FileName"></span> ms <br />
       <img class="img" src="@format.RelativePath" alt="@format.AltText">
     </li>
     }
@@ -85,6 +88,7 @@
       <b>Quality:</b> @compress.Quality <br />
       <b>Dimensions:</b> @compress.Width x @compress.Height, <br />
       <b>File size:</b> @compress.getFileSize() (@compress.FileSize Bytes) <br />
+      <b>Load time:</b> <span class="load-time" data-name="@compress.FileName"></span> ms <br />
       <div class="overflow-container">
         <img src="@compress.RelativePath" alt="@compress.AltText">
       </div>
@@ -96,7 +100,8 @@
   {
       <p>
         <b>File name:</b> <span data-id="@Model.ID"> @Model.Thumbnails.First().FileName </span><br />
-        <b>File size:</b> <span data-id="@Model.ID">@Model.Thumbnails.First().getFileSize() </span><br />
+        <b>File size:</b> @Model.Thumbnails.First().getFileSize() kB, (<span data-id="@Model.ID">@Model.Thumbnails.First().FileSize</span> Bytes)<br />
+        <b>Load time:</b> <span class="load-time" data-name="@Model.Thumbnails.First().FileName"></span> ms <br />
         <img class="img" alt="@Model.AltText" src="@Model.Thumbnails.First().RelativePath" />
       </p>
   }
@@ -115,6 +120,7 @@
       <b>Quality:</b> @metadata.Quality <br />
       <b>Dimensions:</b> @metadata.Width x @metadata.Height, <br />
       <b>File size:</b> @metadata.getFileSize() (@metadata.FileSize Bytes) <br />
+      <b>Load time:</b> <span class="load-time" data-name="@metadata.FileName"></span> ms <br />
       <div class="overflow-container">
         <img class="img" src="@metadata.RelativePath" alt="@metadata.AltText">
       </div>
@@ -133,11 +139,11 @@
   {
       <p>If you see the image below, your client supports webp</p>
       <div class="overflow-container">
-        <img src="@Url.Action("FormatTest", "Image", new { id = Model.ID, format = 5, strip = true})" alt="@Model.AltText" />
+        @*<img src="@Url.Action("FormatTest", "Image", new { id = Model.ID, format = 5, strip = true})" alt="@Model.AltText" />*@
       </div>
   }
   else
   {
-      <p>Same as above, not really usefull converting to webP</p>
+      <p>Same as above, not really usefull converting to WebP</p>
   }
 </div>

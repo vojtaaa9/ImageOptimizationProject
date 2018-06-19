@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Web.Hosting;
@@ -33,7 +32,7 @@ namespace ImageOptimization.Services
                 sizes.Append(thumb.RelativePath);
                 sizes.Append(" ");
                 sizes.Append(thumb.Width);
-                sizes.Append("w,");
+                sizes.Append("w, ");
             }
 
             return new SourceImageViewModel()
@@ -50,7 +49,8 @@ namespace ImageOptimization.Services
                 Metadata = sourceImage.Metadata,
                 Compression = sourceImage.Compression,
                 Sizes = sourceImage.Format == Format.SVG ? "" : sizes.ToString(),
-                FileSize = $"{sourceImage.getFileSize()}, ({sourceImage.FileSize} Bytes)"
+                FileSize = sourceImage.FileSize.ToString(),
+                HumanSize = sourceImage.getFileSize()
             };
         }
 

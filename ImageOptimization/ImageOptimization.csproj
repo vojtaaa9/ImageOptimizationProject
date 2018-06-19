@@ -101,6 +101,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\measure_script.js" />
     <Content Include="assets\styles.css" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
