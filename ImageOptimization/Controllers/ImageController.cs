@@ -16,7 +16,7 @@ namespace ImageOptimization.Controllers
     {
         private ImageContext db = new ImageContext();
         private readonly ImageService imageService = new ImageService();
-        private readonly int[] sizes = { 300, 600, 900, 1200, 1400, 1600, 1750, 1900 };
+        private readonly int[] sizes = { 2048, 1900, 1750, 1600, 1400, 1200, 900, 600, 300 };
 
         // GET: Image
         public ActionResult Index(int count = 10, int page = 0)
@@ -87,7 +87,6 @@ namespace ImageOptimization.Controllers
 
             sourceImage.Width = VipsImage.Width;
             sourceImage.Height = VipsImage.Height;
-
             VipsImage.Dispose();
 
             List<ThumbImage> thumbs = new List<ThumbImage>();
@@ -96,38 +95,113 @@ namespace ImageOptimization.Controllers
             foreach (int size in sizes)
             {
                 ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, size, sourceImage.Thumbnails);
+                //ThumbImage thumbnailx = sourceImage.GetImage(Format.WebP, size, sourceImage.Thumbnails);
 
                 SaveThumb(sourceImage, thumbnail, sourceImage.Thumbnails);
+                //SaveThumb(sourceImage, thumbnailx, sourceImage.Thumbnails);
 
                 thumbs.Add(thumbnail);
             }
 
+                
+            Format[] formats = new Format[] { Format.GIF, Format.JPEG, Format.PNG, Format.WebP };
 
             // Generate format images
-            Format[] formats = new Format[] { Format.GIF, Format.JPEG, Format.PNG, Format.WebP};
+            List<Format[]> formatTransform = new List<Format[]> {
+                new Format[] { Format.GIF, Format.JPEG },
+                new Format[] { Format.GIF, Format.WebP },
+                new Format[] { Format.PNG, Format.JPEG },
+                new Format[] { Format.PNG, Format.WebP },
+                new Format[] { Format.JPEG, Format.WebP },
+                new Format[] { Format.WebP, Format.JPEG }
+            };
 
-            foreach(Format format in formats)
+            List<CompareImage> formatThumb = new List<CompareImage>();
+            List<CompareImage> formatChangeThumb = new List<CompareImage>();
+
+            foreach (Format[] format in formatTransform)
             {
-                ThumbImage formatImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Formats);
+                ThumbImage formatImage = sourceImage.GetImage(format[0], sourceImage.Width, sourceImage.Formats, sourceImage.Height);
+                ThumbImage formatImagex = sourceImage.GetImage(format[1], sourceImage.Width, sourceImage.Formats, sourceImage.Height);
+
+                if (formatImage.Format == Format.SVG)
+                    continue;
+
+                // Check if compare Image already exists
+                CompareImage compare = null;
+                if (db.CompareImages.Any())
+                {
+                    compare = db.CompareImages
+                        .Where(i => i.Image1.AbsolutePath == formatImage.AbsolutePath && i.Image2.AbsolutePath == formatImagex.AbsolutePath)
+                        .FirstOrDefault();
+                }
+
+                // If not, create one
+                if (compare == null)
+                {
+                    compare = new CompareImage
+                    {
+                        Image1 = formatImage,
+                        Image2 = formatImagex,
+                        SSIM = ImageService.GetSSIM(formatImage.AbsolutePath, formatImagex.AbsolutePath)
+                    };
+
+                    db.CompareImages.Add(compare);
+                    db.SaveChanges();
+                }
 
                 SaveThumb(sourceImage, formatImage, sourceImage.Formats);
-            }
+                SaveThumb(sourceImage, formatImagex, sourceImage.Formats);
 
+                formatThumb.Add(compare);
+            }
 
             // Generate compression images
             foreach (Format format in formats)
             {
-                ThumbImage compressImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Compression, q: 75);
+                ThumbImage compressImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Compression, sourceImage.Height, 100);
+                ThumbImage compressImagex = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Compression, sourceImage.Height, 75);
+
+                if (compressImage.Format == Format.SVG)
+                    continue;
+
+                // Check if compare Image already exists
+                CompareImage compare = null;
+                if (db.CompareImages.Any())
+                {
+                    compare = db.CompareImages
+                        .Where(i => i.Image1.AbsolutePath == compressImage.AbsolutePath && i.Image2.AbsolutePath == compressImagex.AbsolutePath)
+                        .FirstOrDefault();
+                }
+
+                // If not, create one
+                if (compare == null)
+                {
+                    compare = new CompareImage
+                    {
+                        Image1 = compressImage,
+                        Image2 = compressImagex,
+                        SSIM = ImageService.GetSSIM(compressImage.AbsolutePath, compressImagex.AbsolutePath)
+                    };
+
+                    db.CompareImages.Add(compare);
+                    db.SaveChanges();
+                }
 
                 SaveThumb(sourceImage, compressImage, sourceImage.Compression);
+                SaveThumb(sourceImage, compressImagex, sourceImage.Compression);
+
+                formatChangeThumb.Add(compare);
             }
 
             // Generate stripped images (remove metadata)
             foreach (Format format in formats)
             {
-                ThumbImage strippedImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Metadata, strip: true);
+                ThumbImage strippedImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Metadata, sourceImage.Height, strip: false);
+                ThumbImage strippedImagex = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Metadata, sourceImage.Height, strip: true);
 
                 SaveThumb(sourceImage, strippedImage, sourceImage.Metadata);
+                SaveThumb(sourceImage, strippedImagex, sourceImage.Metadata);
             }
 
             // Save Changes if any
@@ -137,6 +211,8 @@ namespace ImageOptimization.Controllers
 
             // Create ViewModel
             SourceImageViewModel sourceImageViewModel = ImageService.GetSourceImageViewModel(sourceImage, thumbs);
+            sourceImageViewModel.Formats = formatThumb;
+            sourceImageViewModel.Compression = formatChangeThumb;
 
             return View("Details", sourceImageViewModel);
         }

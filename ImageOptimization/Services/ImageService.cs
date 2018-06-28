@@ -45,9 +45,7 @@ namespace ImageOptimization.Services
                 Height = sourceImage.Height.ToString(),
                 FileFormat = sourceImage.Format.ToString(),
                 Thumbnails = thumbs,
-                Formats = sourceImage.Formats,
                 Metadata = sourceImage.Metadata,
-                Compression = sourceImage.Compression,
                 Sizes = sourceImage.Format == Format.SVG ? "" : sizes.ToString(),
                 FileSize = sourceImage.FileSize.ToString(),
                 HumanSize = sourceImage.getFileSize()
@@ -99,8 +97,8 @@ namespace ImageOptimization.Services
                     }
                     break;
                 case Format.PNG:
-                    // Compression ratio is inverse of quality
-                    int pngQ = (q - 100) * -1;
+                    // Compression ratio is inverse of quality between 0 - 9
+                    int pngQ = (q/10 - 10) * -1;
 
                     image.Pngsave(filePath, pngQ, false, strip: strip);
                     break;
@@ -134,6 +132,26 @@ namespace ImageOptimization.Services
             };
 
             return thumb;
+        }
+
+        /// <summary>
+        /// Get's SSIM Index between two Images using Magick.NET
+        /// </summary>
+        /// <param name="im_one">Absolute path to first image</param>
+        /// <param name="im_two">Absolute path to second image</param>
+        /// <returns>SSIM Index (1-0)</returns>
+        internal static double GetSSIM(String im_one, String im_two)
+        {
+            using (MagickImage image = new MagickImage(im_one))
+            {
+                MagickImage imageX = new MagickImage(im_two);
+
+                var diff = image.Compare(imageX, ErrorMetric.StructuralSimilarity);
+
+                imageX.Dispose();
+
+                return diff;
+            }
         }
 
         /// <summary>

@@ -5,19 +5,22 @@
 
     window.performance.getEntriesByType('resource').map(item => {
       item.initiatorType === 'img' && whatever.push(item);
-      //console.log(item);
+      console.log(item);
     });
 
     whatever.forEach(function (entry) {
-      var duration = entry.responseEnd - entry.requestStart;
+      var duration = entry.responseEnd - entry.responseStart;
       duration = duration.toString().replace(/\./g, ',')
       var file = entry.name.substring(entry.name.lastIndexOf('/') + 1);
       console.log(`File: ${file}, Duration: ${duration} ms`)
 
-      var element = document.querySelector(`span[data-name="${file}"]`);
+      var element = document.querySelectorAll(`span.load-time[data-name="${file}"]`);
 
-      element.textContent = duration;
-      //console.log(element);
+      element.forEach(function (el) {
+        el.textContent = duration;
+      });
+
+      console.log(element);
     });
   });
 }

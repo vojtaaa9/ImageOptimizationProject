@@ -11,7 +11,7 @@ body {
 
 .well {
   margin: 0 auto;
-  max-width: 45em;
+  max-width: 60em;
 }
 
 .img {
@@ -39,7 +39,7 @@ table {
 
 .overflow-container {
   overflow: scroll;
-  max-width: 45em;
+  max-width: 60em;
   max-height: 25em;
 }
 

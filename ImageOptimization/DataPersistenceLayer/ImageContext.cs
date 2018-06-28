@@ -15,5 +15,6 @@ namespace ImageOptimization.DataPersistenceLayer
 
         public DbSet<SourceImage> SourceImages { get; set; }
         public DbSet<ThumbImage> ThumbImages { get; set; }
+        public DbSet<CompareImage> CompareImages { get; set; }
     }
 }
