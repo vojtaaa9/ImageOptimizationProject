@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -14,9 +16,8 @@ namespace ImageOptimization.Controllers
 {
     public class ImageController : Controller
     {
-        private ImageContext db = new ImageContext();
-        private readonly ImageService imageService = new ImageService();
-        private readonly int[] sizes = { 2048, 1900, 1750, 1600, 1400, 1200, 900, 600, 300 };
+        private readonly ImageContext _db = new ImageContext();
+        private readonly int[] _sizes = { 2048, 1900, 1750, 1600, 1400, 1200, 900, 600, 300 };
 
         // GET: Image
         public ActionResult Index(int count = 10, int page = 0)
@@ -25,7 +26,7 @@ namespace ImageOptimization.Controllers
             if (page < 0)
                 page = -1;
 
-            int total = db.SourceImages.Count();
+            int total = _db.SourceImages.Count();
 
             // If page is higher than total pages count
             if (page > total / count)
@@ -34,11 +35,11 @@ namespace ImageOptimization.Controllers
             if (page == -1)
             {
                 // return empty list which shows warning
-                return View(new ListSourceImageViewModel() { Page = 0, ImageItems = new List<ThumbImage>() });
+                return View(new ListSourceImageViewModel { Page = 0, ImageItems = new List<ThumbImage>() });
             }
 
             // Load 30 SourceImages according to current page
-            List<SourceImage> sourceImages = db.SourceImages
+            List<SourceImage> sourceImages = _db.SourceImages
                 .Include(i => i.Thumbnails)
                 .OrderBy(i => i.ID)
                 .Skip(page * count)
@@ -53,14 +54,14 @@ namespace ImageOptimization.Controllers
                 ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, 200, sourceImage.Thumbnails, q: 75);
 
                 SaveThumb(sourceImage, thumbnail, sourceImage.Thumbnails);
-                db.SaveChanges();
+                _db.SaveChanges();
 
                 // Add it to colletion of thumbnails
                 thumbnails.Add(thumbnail);
             }
 
             // Set Data to viewmodel
-            var vm = new ListSourceImageViewModel()
+            var vm = new ListSourceImageViewModel
             {
                 Page = page,
                 ImageItems = thumbnails
@@ -76,23 +77,23 @@ namespace ImageOptimization.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SourceImage sourceImage = db.SourceImages.Find(id);
+            SourceImage sourceImage = _db.SourceImages.Find(id);
             if (sourceImage == null)
             {
                 return HttpNotFound();
             }
 
             // Update Data on Detail view, which cant be inserted into db at seed time
-            Image VipsImage = Image.NewFromFile(sourceImage.AbsolutePath);
+            Image vipsImage = Image.NewFromFile(sourceImage.AbsolutePath);
 
-            sourceImage.Width = VipsImage.Width;
-            sourceImage.Height = VipsImage.Height;
-            VipsImage.Dispose();
+            sourceImage.Width = vipsImage.Width;
+            sourceImage.Height = vipsImage.Height;
+            vipsImage.Dispose();
 
             List<ThumbImage> thumbs = new List<ThumbImage>();
 
             // Generate set of 8 thumbnails
-            foreach (int size in sizes)
+            foreach (var size in _sizes)
             {
                 ThumbImage thumbnail = sourceImage.GetImage(Format.JPEG, size, sourceImage.Thumbnails);
                 //ThumbImage thumbnailx = sourceImage.GetImage(Format.WebP, size, sourceImage.Thumbnails);
@@ -104,16 +105,16 @@ namespace ImageOptimization.Controllers
             }
 
                 
-            Format[] formats = new Format[] { Format.GIF, Format.JPEG, Format.PNG, Format.WebP };
+            Format[] formats = { Format.GIF, Format.JPEG, Format.PNG, Format.WebP };
 
             // Generate format images
             List<Format[]> formatTransform = new List<Format[]> {
-                new Format[] { Format.GIF, Format.JPEG },
-                new Format[] { Format.GIF, Format.WebP },
-                new Format[] { Format.PNG, Format.JPEG },
-                new Format[] { Format.PNG, Format.WebP },
-                new Format[] { Format.JPEG, Format.WebP },
-                new Format[] { Format.WebP, Format.JPEG }
+                new[] { Format.GIF, Format.JPEG },
+                new[] { Format.GIF, Format.WebP },
+                new[] { Format.PNG, Format.JPEG },
+                new[] { Format.PNG, Format.WebP },
+                new[] { Format.JPEG, Format.WebP },
+                new[] { Format.WebP, Format.JPEG }
             };
 
             List<CompareImage> formatThumb = new List<CompareImage>();
@@ -129,11 +130,12 @@ namespace ImageOptimization.Controllers
 
                 // Check if compare Image already exists
                 CompareImage compare = null;
-                if (db.CompareImages.Any())
+                if (_db.CompareImages.Any())
                 {
-                    compare = db.CompareImages
-                        .Where(i => i.Image1.AbsolutePath == formatImage.AbsolutePath && i.Image2.AbsolutePath == formatImagex.AbsolutePath)
-                        .FirstOrDefault();
+                    compare = _db.CompareImages
+                        .FirstOrDefault(i => i.Image1.AbsolutePath == formatImage.AbsolutePath 
+                                             && i.Image2.AbsolutePath == formatImagex.AbsolutePath
+                                             );
                 }
 
                 // If not, create one
@@ -146,8 +148,8 @@ namespace ImageOptimization.Controllers
                         SSIM = ImageService.GetSSIM(formatImage.AbsolutePath, formatImagex.AbsolutePath)
                     };
 
-                    db.CompareImages.Add(compare);
-                    db.SaveChanges();
+                    _db.CompareImages.Add(compare);
+                    _db.SaveChanges();
                 }
 
                 SaveThumb(sourceImage, formatImage, sourceImage.Formats);
@@ -159,7 +161,7 @@ namespace ImageOptimization.Controllers
             // Generate compression images
             foreach (Format format in formats)
             {
-                ThumbImage compressImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Compression, sourceImage.Height, 100);
+                ThumbImage compressImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Compression, sourceImage.Height);
                 ThumbImage compressImagex = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Compression, sourceImage.Height, 75);
 
                 if (compressImage.Format == Format.SVG)
@@ -167,11 +169,10 @@ namespace ImageOptimization.Controllers
 
                 // Check if compare Image already exists
                 CompareImage compare = null;
-                if (db.CompareImages.Any())
+                if (_db.CompareImages.Any())
                 {
-                    compare = db.CompareImages
-                        .Where(i => i.Image1.AbsolutePath == compressImage.AbsolutePath && i.Image2.AbsolutePath == compressImagex.AbsolutePath)
-                        .FirstOrDefault();
+                    compare = _db.CompareImages
+                        .FirstOrDefault(i => i.Image1.AbsolutePath == compressImage.AbsolutePath && i.Image2.AbsolutePath == compressImagex.AbsolutePath);
                 }
 
                 // If not, create one
@@ -184,8 +185,8 @@ namespace ImageOptimization.Controllers
                         SSIM = ImageService.GetSSIM(compressImage.AbsolutePath, compressImagex.AbsolutePath)
                     };
 
-                    db.CompareImages.Add(compare);
-                    db.SaveChanges();
+                    _db.CompareImages.Add(compare);
+                    _db.SaveChanges();
                 }
 
                 SaveThumb(sourceImage, compressImage, sourceImage.Compression);
@@ -197,7 +198,7 @@ namespace ImageOptimization.Controllers
             // Generate stripped images (remove metadata)
             foreach (Format format in formats)
             {
-                ThumbImage strippedImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Metadata, sourceImage.Height, strip: false);
+                ThumbImage strippedImage = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Metadata, sourceImage.Height);
                 ThumbImage strippedImagex = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Metadata, sourceImage.Height, strip: true);
 
                 SaveThumb(sourceImage, strippedImage, sourceImage.Metadata);
@@ -205,8 +206,8 @@ namespace ImageOptimization.Controllers
             }
 
             // Save Changes if any
-            if (db.Entry(sourceImage).State == EntityState.Modified)
-                db.SaveChanges();
+            if (_db.Entry(sourceImage).State == EntityState.Modified)
+                _db.SaveChanges();
 
 
             // Create ViewModel
@@ -224,7 +225,7 @@ namespace ImageOptimization.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SourceImage sourceImage = db.SourceImages.Find(id);
+            SourceImage sourceImage = _db.SourceImages.Find(id);
             if (sourceImage == null)
             {
                 return HttpNotFound();
@@ -233,7 +234,7 @@ namespace ImageOptimization.Controllers
             // Convert the Image
             ThumbImage image = sourceImage.GetImage(format, sourceImage.Width, sourceImage.Thumbnails, q: quality, strip: strip);
             SaveThumb(sourceImage, image, sourceImage.Thumbnails);
-            db.SaveChanges();
+            _db.SaveChanges();
 
             // Return the file back
             return File(image.RelativePath, "image/"+image.getFormat().ToLower());
@@ -254,8 +255,8 @@ namespace ImageOptimization.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.SourceImages.Add(sourceImage);
-                db.SaveChanges();
+                _db.SourceImages.Add(sourceImage);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -269,7 +270,7 @@ namespace ImageOptimization.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SourceImage sourceImage = db.SourceImages.Find(id);
+            SourceImage sourceImage = _db.SourceImages.Find(id);
             if (sourceImage == null)
             {
                 return HttpNotFound();
@@ -286,8 +287,8 @@ namespace ImageOptimization.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(sourceImage).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(sourceImage).State = EntityState.Modified;
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(sourceImage);
@@ -300,7 +301,7 @@ namespace ImageOptimization.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SourceImage sourceImage = db.SourceImages.Find(id);
+            SourceImage sourceImage = _db.SourceImages.Find(id);
             if (sourceImage == null)
             {
                 return HttpNotFound();
@@ -313,9 +314,9 @@ namespace ImageOptimization.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            SourceImage sourceImage = db.SourceImages.Find(id);
-            db.SourceImages.Remove(sourceImage);
-            db.SaveChanges();
+            SourceImage sourceImage = _db.SourceImages.Find(id);
+            _db.SourceImages.Remove(sourceImage ?? throw new InvalidOperationException());
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -325,7 +326,7 @@ namespace ImageOptimization.Controllers
             string result = ModuleInitializer.VipsInitialized
             ? $"Inited libvips {Base.Version(0)}.{Base.Version(1)}.{Base.Version(2)}"
             : "Unable to init libvips";
-            System.Diagnostics.Debug.WriteLine(result);
+            Debug.WriteLine(result);
 
             return View("TestVips", (object)result);
         }
@@ -334,25 +335,25 @@ namespace ImageOptimization.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }
 
         private void SaveThumb(SourceImage sourceImage, ThumbImage thumbnail, List<ThumbImage> collection)
         {
-            if (!db.ThumbImages.AsEnumerable().Contains(thumbnail))
+            if (!_db.ThumbImages.AsEnumerable().Contains(thumbnail))
             {
                 // Save new thumbnail to db
-                db.ThumbImages.Add(thumbnail);
+                _db.ThumbImages.Add(thumbnail);
 
-                db.Entry(sourceImage).State = EntityState.Modified;
+                _db.Entry(sourceImage).State = EntityState.Modified;
             }
 
             if (!collection.AsEnumerable().Contains(thumbnail))
             {
                 collection.Add(thumbnail);
-                db.Entry(sourceImage).State = EntityState.Modified;
+                _db.Entry(sourceImage).State = EntityState.Modified;
             }
         }
     }

@@ -1,6 +1,6 @@
-﻿using ImageOptimization.Enums;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using ImageOptimization.Enums;
 
 namespace ImageOptimization.Models
 {

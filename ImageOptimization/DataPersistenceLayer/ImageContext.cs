@@ -1,5 +1,5 @@
-﻿using ImageOptimization.Models;
-using System.Data.Entity;
+﻿using System.Data.Entity;
+using ImageOptimization.Models;
 
 namespace ImageOptimization.DataPersistenceLayer
 {

@@ -1,11 +1,12 @@
-﻿using NetVips;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using NetVips;
 
 namespace ImageOptimization
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         private uint _handlerId;
 

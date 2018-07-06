@@ -1,6 +1,6 @@
-﻿using ImageOptimization.Enums;
-using System;
+﻿using System;
 using System.IO;
+using ImageOptimization.Enums;
 
 namespace ImageOptimization.Services
 {

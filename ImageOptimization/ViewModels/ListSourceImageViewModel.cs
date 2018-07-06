@@ -1,5 +1,5 @@
-﻿using ImageOptimization.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ImageOptimization.Models;
 
 namespace ImageOptimization.ViewModels
 {

@@ -1,22 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Data.Entity.Migrations;
+using System.IO;
+using System.Reflection;
+using ImageOptimization.DataPersistenceLayer;
+using ImageOptimization.Enums;
+using ImageOptimization.Models;
+using ImageOptimization.Services;
+
 namespace ImageOptimization.Migrations
 {
-    using ImageOptimization.Models;
-    using ImageOptimization.Services;
-    using System;
-    using System.Data.Entity.Migrations;
-    using System.IO;
-    using System.Reflection;
-    using System.Collections.Generic;
-    using ImageOptimization.Enums;
-
-    internal sealed class Configuration : DbMigrationsConfiguration<DataPersistenceLayer.ImageContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<ImageContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(DataPersistenceLayer.ImageContext context)
+        protected override void Seed(ImageContext context)
         {
             String absoluteDir = MapPath("images");
             string[] fileEntries = FileService.GetAllFilesInDir(absoluteDir);
@@ -28,7 +29,7 @@ namespace ImageOptimization.Migrations
             foreach (string path in fileEntries)
             {
 
-                var image = new SourceImage()
+                var image = new SourceImage
                 {
                     ID = i+1,
                     AbsolutePath = path,
@@ -47,7 +48,7 @@ namespace ImageOptimization.Migrations
                 {
                     var minPath = absoluteDir + "/out/" + Path.GetFileNameWithoutExtension(path) + ".min.svg";
 
-                    var optimized = new ThumbImage()
+                    var optimized = new ThumbImage
                     {
                         FileName = Path.GetFileName(minPath),
                         AltText = image.AltText,

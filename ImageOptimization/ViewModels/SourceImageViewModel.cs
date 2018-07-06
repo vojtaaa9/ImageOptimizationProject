@@ -1,6 +1,6 @@
-﻿using ImageOptimization.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using ImageOptimization.Models;
 
 namespace ImageOptimization.ViewModels
 {

@@ -1,8 +1,8 @@
-﻿using ImageOptimization.Enums;
-using ImageOptimization.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ImageOptimization.Enums;
+using ImageOptimization.Services;
 
 namespace ImageOptimization.Models
 {
@@ -87,7 +87,7 @@ namespace ImageOptimization.Models
         /// <returns></returns>
         private ThumbImage GetThumbImage()
         {
-            return new ThumbImage()
+            return new ThumbImage
             {
                 ID = ID,
                 FileName = FileName,

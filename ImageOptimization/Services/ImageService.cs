@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web.Hosting;
+using ImageMagick;
+using ImageOptimization.Enums;
 using ImageOptimization.Models;
 using ImageOptimization.ViewModels;
-using ImageOptimization.Enums;
 using NetVips;
-using ImageMagick;
-using System.Collections.Generic;
 
 namespace ImageOptimization.Services
 {
@@ -35,7 +35,7 @@ namespace ImageOptimization.Services
                 sizes.Append("w, ");
             }
 
-            return new SourceImageViewModel()
+            return new SourceImageViewModel
             {
                 ID = sourceImage.ID,
                 FileName = sourceImage.FileName,
@@ -83,7 +83,7 @@ namespace ImageOptimization.Services
             switch (format)
             {
                 case Format.JPEG:
-                    image.Jpegsave(filePath, null, q, null, true, true, false, true, null, true, null, strip, new double[] { 255.0, 255.0, 255.0 });
+                    image.Jpegsave(filePath, null, q, null, true, true, false, true, null, true, null, strip, new[] { 255.0, 255.0, 255.0 });
                     break;
                 case Format.GIF:
                     using (MagickImage imImage = new MagickImage(src.AbsolutePath))
@@ -116,7 +116,7 @@ namespace ImageOptimization.Services
             }
 
             // Create new ThumbImage Model
-            var thumb = new ThumbImage()
+            var thumb = new ThumbImage
             {
                 AbsolutePath = filePath,
                 AltText = src.AltText,
