@@ -51,7 +51,7 @@ All thumbnail images will be saved in `ImageOptimization/thumbnails` folder. The
 
 For example: source image with name **lizard.tif** will have this thumbnail generated and saved: `th_200x130_100_lizard.jpeg`
 
-```
+```bash
 > magick compare -verbose -metric SSIM birthday.png birthday-768.png NULL:
 birthday.png PNG 1024x768 1024x768+0+0 8-bit sRGB 346856B 0.016u 0:00.021
 birthday-768.png PNG 768x576 768x576+0+0 8-bit sRGB 307858B 0.016u 0:00.016
