@@ -16,8 +16,15 @@ namespace ImageOptimization.Controllers
 {
     public class ImageController : Controller
     {
-        private readonly ImageContext _db = new ImageContext();
+        private readonly IStoreAppContext _db = new ImageContext();
         private readonly int[] _sizes = { 2048, 1900, 1750, 1600, 1400, 1200, 900, 600, 300 };
+
+        public ImageController() {}
+
+        public ImageController(IStoreAppContext context)
+        {
+            _db = context;
+        }
 
         // GET: Image
         public ActionResult Index(int count = 10, int page = 0)
@@ -206,7 +213,7 @@ namespace ImageOptimization.Controllers
             }
 
             // Save Changes if any
-            if (_db.Entry(sourceImage).State == EntityState.Modified)
+            if (_db.IsModified(sourceImage))
                 _db.SaveChanges();
 
 
@@ -287,7 +294,7 @@ namespace ImageOptimization.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Entry(sourceImage).State = EntityState.Modified;
+                _db.IsModified(sourceImage);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -347,13 +354,13 @@ namespace ImageOptimization.Controllers
                 // Save new thumbnail to db
                 _db.ThumbImages.Add(thumbnail);
 
-                _db.Entry(sourceImage).State = EntityState.Modified;
+                _db.MarkAsModified(sourceImage);
             }
 
             if (!collection.AsEnumerable().Contains(thumbnail))
             {
                 collection.Add(thumbnail);
-                _db.Entry(sourceImage).State = EntityState.Modified;
+                _db.MarkAsModified(sourceImage);
             }
         }
     }
